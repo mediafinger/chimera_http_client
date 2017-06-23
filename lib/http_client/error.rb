@@ -1,0 +1,76 @@
+module HttpClient
+  class HttpError < StandardError
+    attr_reader :body, :code, :time, :response
+    alias message body
+
+    def initialize(response)
+      @body     = response.body
+      @code     = response.code
+      @time     = response.options&.fetch(:total_time, nil)
+      @response = response # contains the request
+      super
+    end
+
+    def error?
+      true
+    end
+
+    def parsed_body
+      JSON.parse(body)
+    rescue JSON::ParserError
+      { "non_json_body" => body }
+    end
+
+    def to_s
+      error = "#{self.class.name} (#{code}) #{message}, URL: #{url}"
+
+      return "#{error}, Request: #{response.request.inspect}" if log_requests?
+
+      error
+    end
+
+    def to_json
+      error = {
+        code:        code,
+        error_class: self.class.name,
+        method:      http_method,
+        url:         url,
+        message:     message,
+      }
+
+      return error.merge({ request: response.request.inspect }).to_json if log_requests?
+
+      error.to_json
+    end
+
+    private
+
+    def url
+      response.request.base_url
+    end
+
+    def http_method
+      response.request.options[:method]
+    end
+
+    def log_requests?
+      ENV["HTTP_CLIENT_LOG_REQUESTS"] == true || ENV["HTTP_CLIENT_LOG_REQUESTS"] == "true"
+    end
+  end
+
+  class ParameterMissingError < StandardError; end     # missing parameters
+  class JsonParserError < StandardError; end           # body is not parsable json
+
+  class HttpConnectionError < HttpError; end           # 0
+  class HttpRedirectionError < HttpError; end          # 301, 302, 303, 307
+  class HttpBadRequestError < HttpError; end           # 400
+  class HttpUnauthorizedError < HttpError; end         # 401
+  class HttpForbiddenError < HttpError; end            # 403
+  class HttpNotFoundError < HttpError; end             # 404
+  class HttpMethodNotAllowedError < HttpError; end     # 405
+  class HttpResourceConflictError < HttpError; end     # 409
+  class HttpUnprocessableEntityError < HttpError; end  # 422
+  class HttpClientError < HttpError; end               # 400..499
+  class HttpServerError < HttpError; end               # 500..599
+  class HttpTimeoutError < HttpError; end              # timeout
+end
