@@ -16,6 +16,9 @@ Metrics/BlockLength:
 Metrics/ClassLength:
   Max: 150
 
+Metrics/CyclomaticComplexity:
+  Max: 15
+
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes.
 # URISchemes: http, https
 Metrics/LineLength:
@@ -26,9 +29,9 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Max: 32
 
-Metrics/CyclomaticComplexity:
-  Max: 10
-# Cop supports --auto-correct.
+Metrics/ParameterLists:
+  Max: 7
+
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: braces, no_braces, context_dependent
 Style/BracesAroundHashParameters:
