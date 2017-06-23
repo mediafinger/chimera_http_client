@@ -11,6 +11,8 @@ module HttpClient
 
     def parsed_body
       JSON.parse(body)
+    rescue JSON::ParserError => e
+      raise HttpClient::JsonParserError, "Could not parse body as JSON: #{body}, error: #{e.message}"
     end
 
     def error?

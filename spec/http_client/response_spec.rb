@@ -25,4 +25,14 @@ describe HttpClient::Response do
   let(:response_time) { 0.5 }
 
   it_behaves_like "a Response"
+
+  context "when body is no json" do
+    let(:response_json) { "<html>Hello World</html>" }
+
+    it "throws a helpful error" do
+      expect { response.parsed_body }.to raise_error(
+        HttpClient::JsonParserError, /Could not parse body as JSON: #{response_json}, error: *./
+      )
+    end
+  end
 end
