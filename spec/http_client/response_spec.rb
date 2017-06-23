@@ -1,6 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.shared_examples 'a Response' do
+RSpec.shared_examples "a Response" do
   it { expect(subject.error?).to be false }
   it { expect(subject.response).to eq(typhoeus_response) }
 
@@ -10,8 +10,8 @@ RSpec.shared_examples 'a Response' do
 
   it { expect(subject.parsed_body).to eq(response_body) }
   it { expect(subject.parsed_body).to be_kind_of(Hash) }
-  it { expect(subject.parsed_body['id']).to eq(42) }
-  it { expect(subject.parsed_body['name']).to eq('Andy') }
+  it { expect(subject.parsed_body["id"]).to eq(42) }
+  it { expect(subject.parsed_body["name"]).to eq("Andy") }
 end
 
 describe HttpClient::Response do
@@ -20,9 +20,9 @@ describe HttpClient::Response do
   let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
 
   let(:response_code) { 200 }
-  let(:response_body) { { 'id' => 42, 'name' => 'Andy' } }
+  let(:response_body) { { "id" => 42, "name" => "Andy" } }
   let(:response_json) { response_body.to_json }
   let(:response_time) { 0.5 }
 
-  it_behaves_like 'a Response'
+  it_behaves_like "a Response"
 end
