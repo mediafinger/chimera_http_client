@@ -3,4 +3,10 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task default: :spec
+desc "Run Rubocop"
+task :rubocop do
+  system "bundle exec rubocop -c .rubocop.yml"
+end
+
+desc "Run all the tests"
+task default: %i[spec rubocop]
