@@ -323,16 +323,23 @@ describe HttpClient::Connection do
   end
 
   describe "url generation" do
-    it { expect(connection.send(:url, "namespace/endpoint")).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, "/namespace/endpoint")).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, "namespace/endpoint/")).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, "/namespace/endpoint/")).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
+    let(:expected_url) { "http://127.0.0.1:3000/v1/namespace/endpoint" }
 
-    it { expect(connection.send(:url, %w[namespace endpoint])).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, ["/namespace", "endpoint"])).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, ["namespace", "endpoint/"])).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
-    it { expect(connection.send(:url, ["/namespace", "endpoint/"])).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
+    it { expect(connection.send(:url, "namespace/endpoint")).to eq(expected_url) }
+    it { expect(connection.send(:url, "/namespace/endpoint")).to eq(expected_url) }
+    it { expect(connection.send(:url, "namespace/endpoint/")).to eq(expected_url) }
+    it { expect(connection.send(:url, "/namespace/endpoint/")).to eq(expected_url) }
 
-    it { expect(connection.send(:url, %i[namespace endpoint])).to eq("http://127.0.0.1:3000/v1/namespace/endpoint") }
+    it { expect(connection.send(:url, %w[namespace endpoint])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/namespace", "endpoint"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["namespace", "endpoint/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/namespace", "endpoint/"])).to eq(expected_url) }
+
+    it { expect(connection.send(:url, ["namespace/", "endpoint/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/namespace", "/endpoint/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/", :namespace, "/", "endpoint", "/"])).to eq(expected_url) }
+
+    it { expect(connection.send(:url, :"namespace/endpoint")).to eq(expected_url) }
+    it { expect(connection.send(:url, %i[namespace endpoint])).to eq(expected_url) }
   end
 end

@@ -53,12 +53,12 @@ module HttpClient
     end
 
     def url(endpoint)
-      trimmed_endpoint = trimmed_string(Array(endpoint).map(&:to_s).flatten.compact.join("/"))
-      [@base_url.chomp("/"), trimmed_endpoint].flatten.compact.join("/")
+      trimmed_endpoint = Array(endpoint).map { |e| trim(e) }
+      [@base_url.chomp("/"), trimmed_endpoint].flatten.reject(&:empty?).join("/")
     end
 
-    def trimmed_string(string)
-      string.sub(%r{^\/}, "").chomp("/")
+    def trim(element)
+      element.to_s.sub(%r{^\/}, "").chomp("/")
     end
 
     def extract_body(options)
