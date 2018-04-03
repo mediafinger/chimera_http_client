@@ -10,8 +10,7 @@ It does not have any other runtime dependencies.
 
 ### optional
 
-Setting the environment variable `ENV['HTTP_CLIENT_LOG_REQUESTS']` will provide more detailed error messages for logging and also add additional information to the HttpError JSON. It is recommended to use this only in development environments.
-
+Setting the environment variable `ENV['HTTP_CLIENT_LOG_REQUESTS']` to `true` (or `'true'`) will provide more detailed error messages for logging and also add additional information to the HttpError JSON. It is recommended to use this only in development environments.
 
 ## The Connection class
 
@@ -29,7 +28,9 @@ On this connection object, you can call methods like `#get!` or `#post!` with an
 `connection.get!("users/#{id}")` or  
 `connection.get(['users', id], options: { headers: { '	Accept-Charset' => 'utf-8' })`  
 
-Please take note that _the endpoint can be given as a String or as an Array of Strings._  
+Please take note that _the endpoint can be given as a String, a Symbol, or as an Array._  
+While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._
+When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._  
 On each request _the http-headers can be amended or overwritten_ completely or partially.
 
 In case you need to use an API that is protected by **basic_auth** just pass the credentials in the options hash:  
@@ -65,7 +66,7 @@ class Users
     response = connection.get!('users', params: params)
 
     all_users = response.parsed_body
-    all_users.map { |user| User.new(id: id, name: user['name'], email: user['email']) }
+    all_users.map { |user| User.new(id: user['id'], name: user['name'], email: user['email']) }
 
   rescue HttpClient::HttpError => error
     # handle / log / raise error
@@ -81,21 +82,24 @@ class Users
     # handle / log / raise error
   end
 
+  private
+
   def connection
     @connection ||= HttpClient::Connection.new(base_url: @base_url)
   end
 end
 ```
 
-To create and fetch a user from a remote service, calls could be made like this:
+To create and fetch a user from a remote service with the `Users` wrapper listed above, calls could be made like this:
 
 ```ruby
   users = Users.new
 
-  response = users.create(body: { name: "Andy", email: "andy@example.com" })
-  id = response.parsed_body[:id]
+  new_user = users.create(body: { name: "Andy", email: "andy@example.com" })
+  id = new_user.id
 
   user = users.find(id: id)
+  user.name # == "Andy"
 ```
 
 ## The Request class
@@ -161,8 +165,9 @@ When updating the version, do not forget to run
 
 ## Development
 
-After checking out the repo, run `rake` to run the tests and rubocop.  
-You can also run `irb -r lib/http_client.rb` to open an interactive prompt that will allow you to experiment.
+After checking out the repo, run `rake` to run the **tests and rubocop**.
+
+You can also run `rake console` to open an irb session with the `HttpClient` pre-loaded that will allow you to experiment.
 
 ### Maintainers and Contributors
 
