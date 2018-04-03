@@ -1,9 +1,15 @@
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
   Exclude:
       - vendor/**/*
       - config.ru
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
+# SupportedStyles: special_inside_parentheses, consistent, align_braces
+Layout/IndentHash:
+  EnforcedStyle: consistent
 
 Metrics/AbcSize:
   Max: 35
@@ -37,14 +43,11 @@ Metrics/ParameterLists:
 Style/BracesAroundHashParameters:
   Enabled: false
 
-Style/Documentation:
+Style/CommentedKeyword:
   Enabled: false
 
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: special_inside_parentheses, consistent, align_braces
-Style/IndentHash:
-  EnforcedStyle: consistent
+Style/Documentation:
+  Enabled: false
 
 Style/DoubleNegation:
   Enabled: true
@@ -76,7 +79,10 @@ Style/Semicolon:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
 # SupportedStyles: comma, consistent_comma, no_comma
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
 # Cop supports --auto-correct.

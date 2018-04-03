@@ -1,5 +1,5 @@
 module HttpClient
-  ROOT_PATH = File.expand_path("../..", __FILE__)
+  ROOT_PATH = File.expand_path("..", __dir__)
 
   require "json"
   require "typhoeus"
