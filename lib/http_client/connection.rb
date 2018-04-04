@@ -21,10 +21,10 @@ module HttpClient
       @request ||= Request.new
     end
 
-    def get(endpoint, options = {}, &block)
+    def get(endpoint, options = {})
       headers = extract_headers(options, default_headers)
 
-      request.run(url: url(endpoint), method: :get, options: options, headers: headers, &block)
+      request.run(url: url(endpoint), method: :get, options: options, headers: headers)
     end
 
     def post(endpoint, options = {})
@@ -45,11 +45,11 @@ module HttpClient
 
     private
 
-    def run_with_body(method, endpoint, options = {}, &block)
+    def run_with_body(method, endpoint, options = {})
       body = extract_body(options)
       headers = extract_headers(options, default_headers)
 
-      request.run(url: url(endpoint), method: method, body: body, options: options, headers: headers, &block)
+      request.run(url: url(endpoint), method: method, body: body, options: options, headers: headers)
     end
 
     def url(endpoint)
@@ -86,8 +86,8 @@ module HttpClient
         patch!:  :patch,
         delete!: :delete,
       }.each do |method_name, implemented_method|
-        self.class.send(:define_method, method_name) do |endpoint, options = {}, &block|
-          result = public_send(implemented_method, endpoint, options, &block)
+        self.class.send(:define_method, method_name) do |endpoint, options = {}|
+          result = public_send(implemented_method, endpoint, options)
 
           fail result if result.error?
 

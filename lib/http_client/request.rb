@@ -2,7 +2,7 @@ module HttpClient
   class Request
     TIMEOUT_SECONDS = 5
 
-    def run(url:, method:, body: nil, options: {}, headers: {}, &block)
+    def run(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
         body:            body,
@@ -21,7 +21,7 @@ module HttpClient
 
       result = nil
       request.on_complete do |response|
-        result = on_complete_handler(response, &block)
+        result = on_complete_handler(response)
       end
 
       request.run
@@ -31,13 +31,13 @@ module HttpClient
 
     private
 
-    def on_complete_handler(response, &block)
+    def on_complete_handler(response)
       return Response.new(response) if response.success?
 
-      exception_for(response, &block)
+      exception_for(response)
     end
 
-    def exception_for(response, &_block)
+    def exception_for(response)
       return HttpTimeoutError.new(response) if response.timed_out?
 
       case response.code.to_i
