@@ -5,9 +5,10 @@ module ChimeraHttpClient
   class Connection
     USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
 
-    def initialize(base_url:, user_agent: USER_AGENT, verbose: false)
+    def initialize(base_url:, user_agent: USER_AGENT, timeout: nil, verbose: false)
       fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
       @base_url = base_url
+      @timeout = timeout
 
       define_bang_methods
 
@@ -24,7 +25,7 @@ module ChimeraHttpClient
     def get(endpoint, options = {})
       headers = extract_headers(options, default_headers)
 
-      request.run(url: url(endpoint), method: :get, options: options, headers: headers)
+      request.run(url: url(endpoint), method: :get, options: augmented_options(options), headers: headers)
     end
 
     def post(endpoint, options = {})
@@ -45,18 +46,27 @@ module ChimeraHttpClient
 
     private
 
+    # Add default values to call options
+    def augmented_options(options)
+      options[:timeout] ||= @timeout
+
+      options
+    end
+
     def run_with_body(method, endpoint, options = {})
       body = extract_body(options)
       headers = extract_headers(options, default_headers)
 
-      request.run(url: url(endpoint), method: method, body: body, options: options, headers: headers)
+      request.run(url: url(endpoint), method: method, body: body, options: augmented_options(options), headers: headers)
     end
 
+    # Build URL out of @base_url and endpoint given as String or Array, while trimming redundant "/"
     def url(endpoint)
       trimmed_endpoint = Array(endpoint).map { |e| trim(e) }
       [@base_url.chomp("/"), trimmed_endpoint].flatten.reject(&:empty?).join("/")
     end
 
+    # Remove leading and trailing "/" from a give part of a String (usually URL or endpoint)
     def trim(element)
       element.to_s.sub(%r{^\/}, "").chomp("/")
     end

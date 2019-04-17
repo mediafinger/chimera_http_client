@@ -36,6 +36,12 @@ On each request _the http-headers can be amended or overwritten_ completely or p
 In case you need to use an API that is protected by **basic_auth** just pass the credentials in the options hash:  
 `options: { username: 'admin', password: 'secret' }`
 
+### Timeout duration
+
+The default timeout duration is **3 seconds**.
+
+If you want to use a different timeout, you can pass the key `timeout` when initializing the `Connection`. You can also overwrite it on every call.
+
 ### Example usage
 
 To use the gem, it is recommended to write wrapper classes for the endpoints used. While it would be possible to use the `get, get!, post, post!, put, put!, patch, patch!, delete, delete!` or also the bare `request.run` methods directly, wrapper classes will unify the usage pattern and be very convenient to use by veterans and newcomers to the team. A wrapper class could look like this:

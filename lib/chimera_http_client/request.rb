@@ -1,14 +1,14 @@
 module ChimeraHttpClient
   class Request
-    TIMEOUT_SECONDS = 5
+    TIMEOUT_SECONDS = 3
 
     def run(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
         body:            body,
-        params:          options.fetch(:params, {}),
+        params:          options[:params] || {},
         headers:         headers,
-        timeout:         options.fetch(:timeout, TIMEOUT_SECONDS),
+        timeout:         options[:timeout] || TIMEOUT_SECONDS,
         accept_encoding: "gzip",
       }
 
