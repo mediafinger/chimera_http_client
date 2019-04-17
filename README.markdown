@@ -169,7 +169,11 @@ After checking out the repo, run `rake` to run the **tests and rubocop**.
 
 You can also run `rake console` to open an irb session with the `ChimeraHttpClient` pre-loaded that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To build and install this gem onto your local machine, run `bundle exec rake install`.
+
+> Maintainers only:
+>
+> To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 Bug reports and pull requests are welcome on GitHub at <https://github.com/mediafinger/chimera_http_client>
 
