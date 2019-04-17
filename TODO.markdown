@@ -15,12 +15,12 @@ _none known_
 
 ### Logger
 
-* allow to pass a logger
-* add logger.info when starting a http call
-* add logger.info when finishing a successful http call
-* add logger.warn / .error for error cases
-* include the total_time of the requests in the log
-* add example to README
+* ~allow to pass a logger~
+* ~add logger.info when starting a http call~
+* ~add logger.info when finishing a successful http call~
+* ~include the total_time of the requests in the log~
+* ~add (example) to README~
+* add logger.warn / .error for error cases (?)
 
 ### Custom Serializer
 
@@ -46,10 +46,17 @@ _none known_
 * optional per connection or call
 * add example to README
 
+### Timeout
+
+* ~allow to set custom timeout per connection~
+* ~allow to set custom timeout per call~
+* ~add (example) to README~
+
 ### Release
 
-* make repo public
+* ~rename module to have unique namespace~
+* ~release to rubygems to add to the plethora of similar gems~
+* ~make repo public~
 * hook up Travis-CI
-* ensure it runs with Ruby 2.5 and newer
+* ensure it runs with Ruby 2.4 and newer
 * get feedback
-* release to rubygems to add to the plethora of similar gems

@@ -189,6 +189,10 @@ To build and install this gem onto your local machine, run `bundle exec rake ins
 
 Bug reports and pull requests are welcome on GitHub at <https://github.com/mediafinger/chimera_http_client>
 
+### Roadmap
+
+https://github.com/mediafinger/chimera_http_client/blob/master/TODO.markdown
+
 ## Chimera
 
 Why this name? First of all, I needed a unique namespace. _HttpClient_ is already used too often. And as this gem is based on **Typhoeus** I picked the name of one of his (mythological) children.
