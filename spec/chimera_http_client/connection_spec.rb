@@ -335,10 +335,12 @@ describe ChimeraHttpClient::Connection do
     it { expect(connection.send(:url, ["namespace", "endpoint/"])).to eq(expected_url) }
     it { expect(connection.send(:url, ["/namespace", "endpoint/"])).to eq(expected_url) }
 
-    it { expect(connection.send(:url, ["namespace/", "endpoint/"])).to eq(expected_url) }
-    it { expect(connection.send(:url, ["/namespace", "/endpoint/"])).to eq(expected_url) }
-    it { expect(connection.send(:url, ["/", :namespace, "/", "endpoint", "/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["namespace/", "/endpoint"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["namespace/", "/endpoint/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/namespace/", "/endpoint/"])).to eq(expected_url) }
+    it { expect(connection.send(:url, ["/namespace/", "/endpoint"])).to eq(expected_url) }
 
+    it { expect(connection.send(:url, ["/", :namespace, "/", "endpoint", "/"])).to eq(expected_url) }
     it { expect(connection.send(:url, :"namespace/endpoint")).to eq(expected_url) }
     it { expect(connection.send(:url, %i[namespace endpoint])).to eq(expected_url) }
   end
