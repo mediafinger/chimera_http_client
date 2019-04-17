@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "Http Client to connect to REST APIs"
   spec.description   = "General http client functionality to easily connect to JSON endpoints"
   spec.homepage      = "https://github.com/mediafinger/chimera_http_client"
+  spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
