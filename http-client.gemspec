@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = "chimera_http_client"
   spec.version       = ChimeraHttpClient::VERSION
   spec.authors       = ["Andreas Finger"]
-  spec.email         = ["andy@mediafinger.com"]
+  spec.email         = ["webmaster@mediafinger.com"]
 
   spec.summary       = "Http Client to connect to REST APIs"
   spec.description   = "General http client functionality to easily connect to JSON endpoints"
