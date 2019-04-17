@@ -73,7 +73,7 @@ class Users
     params[:filter] = filter
     params[:page] = page
 
-    response = connection.get!('users', params: params)
+    response = connection.get!('users', params: params, timeout: 10) # set longer timeout
 
     all_users = response.parsed_body
     all_users.map { |user| User.new(id: user['id'], name: user['name'], email: user['email']) }
@@ -95,7 +95,9 @@ class Users
   private
 
   def connection
-    @connection ||= ChimeraHttpClient::Connection.new(base_url: @base_url)
+    # base_url is mandatory
+    # logger and timeout are optional
+    @connection ||= ChimeraHttpClient::Connection.new(base_url: @base_url, logger: Logger.new(STDOUT), timeout: 2)
   end
 end
 ```
