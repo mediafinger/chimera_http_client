@@ -1,12 +1,12 @@
-# The get, post, put, patch and delete methods return either a Response or a HttpError
-# The bang methods get!, post!, put!, patch! and delete! raise a HttpError in case of failure
+# The get, post, put, patch and delete methods return either a Response or a Error
+# The bang methods get!, post!, put!, patch! and delete! raise a Error in case of failure
 
-module HttpClient
+module ChimeraHttpClient
   class Connection
-    USER_AGENT = "HttpClient (by mediafinger)".freeze
+    USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
 
     def initialize(base_url:, user_agent: USER_AGENT, verbose: false)
-      fail(HttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
+      fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
       @base_url = base_url
 
       define_bang_methods
@@ -64,7 +64,7 @@ module HttpClient
     def extract_body(options)
       body = options.delete(:body)
       body_optional = options.delete(:body_optional)
-      fail(HttpClient::ParameterMissingError, "body expected, but not given") if body.nil? && !body_optional
+      fail(ChimeraHttpClient::ParameterMissingError, "body expected, but not given") if body.nil? && !body_optional
       body
     end
 
@@ -77,7 +77,7 @@ module HttpClient
       { "Content-Type" => "application/json" }
     end
 
-    # get! post! put! patch! delete! return an Response when successful, but raise an HttpError otherwise
+    # get! post! put! patch! delete! return an Response when successful, but raise an Error otherwise
     def define_bang_methods
       {
         get!:    :get,

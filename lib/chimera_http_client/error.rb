@@ -1,5 +1,5 @@
-module HttpClient
-  class HttpError < StandardError
+module ChimeraHttpClient
+  class Error < StandardError
     attr_reader :body, :code, :time, :response
     alias message body
 
@@ -54,23 +54,23 @@ module HttpClient
     end
 
     def log_requests?
-      ENV["HTTP_CLIENT_LOG_REQUESTS"] == true || ENV["HTTP_CLIENT_LOG_REQUESTS"] == "true"
+      ENV["CHIMERA_HTTP_CLIENT_LOG_REQUESTS"] == true || ENV["CHIMERA_HTTP_CLIENT_LOG_REQUESTS"] == "true"
     end
   end
 
   class ParameterMissingError < StandardError; end     # missing parameters
   class JsonParserError < StandardError; end           # body is not parsable json
 
-  class HttpConnectionError < HttpError; end           # 0
-  class HttpRedirectionError < HttpError; end          # 301, 302, 303, 307
-  class HttpBadRequestError < HttpError; end           # 400
-  class HttpUnauthorizedError < HttpError; end         # 401
-  class HttpForbiddenError < HttpError; end            # 403
-  class HttpNotFoundError < HttpError; end             # 404
-  class HttpMethodNotAllowedError < HttpError; end     # 405
-  class HttpResourceConflictError < HttpError; end     # 409
-  class HttpUnprocessableEntityError < HttpError; end  # 422
-  class HttpClientError < HttpError; end               # 400..499
-  class HttpServerError < HttpError; end               # 500..599
-  class HttpTimeoutError < HttpError; end              # timeout
+  class ConnectionError < Error; end           # 0
+  class RedirectionError < Error; end          # 301, 302, 303, 307
+  class BadRequestError < Error; end           # 400
+  class UnauthorizedError < Error; end         # 401
+  class ForbiddenError < Error; end            # 403
+  class NotFoundError < Error; end             # 404
+  class MethodNotAllowedError < Error; end     # 405
+  class ResourceConflictError < Error; end     # 409
+  class UnprocessableEntityError < Error; end  # 422
+  class ClientError < Error; end               # 400..499
+  class ServerError < Error; end               # 500..599
+  class TimeoutError < Error; end              # timeout
 end

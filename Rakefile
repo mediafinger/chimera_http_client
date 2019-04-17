@@ -3,9 +3,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:rspec)
 
-desc "Open a console with the HttpClient loaded"
+desc "Open a console with the ChimeraHttpClient loaded"
 task :console do
-  system "irb -r lib/http_client.rb"
+  system "irb -r lib/chimera_http_client.rb"
 end
 
 desc "Run Rubocop"

@@ -14,7 +14,7 @@ RSpec.shared_examples "a Response" do
   it { expect(subject.parsed_body["name"]).to eq("Andy") }
 end
 
-describe HttpClient::Response do
+describe ChimeraHttpClient::Response do
   subject(:response) { described_class.new(typhoeus_response) }
 
   let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
@@ -31,7 +31,7 @@ describe HttpClient::Response do
 
     it "throws a helpful error" do
       expect { response.parsed_body }.to raise_error(
-        HttpClient::JsonParserError, /Could not parse body as JSON: #{response_json}, error: *./
+        ChimeraHttpClient::JsonParserError, /Could not parse body as JSON: #{response_json}, error: *./
       )
     end
   end

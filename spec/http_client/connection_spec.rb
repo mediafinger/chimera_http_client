@@ -1,7 +1,7 @@
 require "spec_helper"
 
 RSpec.shared_examples "a Connection call that is successful" do
-  it { expect(subject).to be_kind_of(HttpClient::Response) }
+  it { expect(subject).to be_kind_of(ChimeraHttpClient::Response) }
 
   it { expect(subject.code).to eq(response_code) }
   it { expect(subject.body).to eq(response_json) }
@@ -15,7 +15,7 @@ RSpec.shared_examples "a Connection call that is successful" do
 end
 
 RSpec.shared_examples "a Connection call that returns an error" do
-  it { expect(subject).to be_kind_of(HttpClient::HttpError) }
+  it { expect(subject).to be_kind_of(ChimeraHttpClient::Error) }
 
   it { expect(subject.error?).to be true }
   it { expect(subject.code).to eq(failure_code) }
@@ -26,7 +26,7 @@ end
 
 RSpec.shared_examples "a Connection call that raises an error" do
   it "raises an error" do
-    expect { subject }.to raise_error(HttpClient::HttpError)
+    expect { subject }.to raise_error(ChimeraHttpClient::Error)
   end
 end
 
@@ -45,7 +45,7 @@ RSpec.shared_examples "a Connection request with correct headers" do
   end
 end
 
-describe HttpClient::Connection do
+describe ChimeraHttpClient::Connection do
   let(:connection) { described_class.new(base_url: base_url) }
   let(:base_url) { "http://127.0.0.1:3000/v1" }
 
@@ -64,7 +64,7 @@ describe HttpClient::Connection do
   let(:request_headers) { { "Content-Type" => "application/json" } }
 
   describe ".new" do
-    it { expect(connection).to be_kind_of HttpClient::Connection }
+    it { expect(connection).to be_kind_of ChimeraHttpClient::Connection }
     it { expect(connection).to respond_to(:request) }
     it { expect(connection).to respond_to(:get) }
     it { expect(connection).to respond_to(:post) }
@@ -77,7 +77,7 @@ describe HttpClient::Connection do
     it { expect(connection).to respond_to(:patch!) }
     it { expect(connection).to respond_to(:delete!) }
 
-    it { expect(connection.request).to be_kind_of HttpClient::Request }
+    it { expect(connection.request).to be_kind_of ChimeraHttpClient::Request }
   end
 
   # GET
@@ -147,7 +147,7 @@ describe HttpClient::Connection do
       let(:body) { nil }
 
       it "raises an error" do
-        expect { post }.to raise_error(HttpClient::ParameterMissingError)
+        expect { post }.to raise_error(ChimeraHttpClient::ParameterMissingError)
       end
     end
   end
@@ -175,7 +175,7 @@ describe HttpClient::Connection do
       let(:body) { nil }
 
       it "raises an error" do
-        expect { post! }.to raise_error(HttpClient::ParameterMissingError)
+        expect { post! }.to raise_error(ChimeraHttpClient::ParameterMissingError)
       end
     end
   end

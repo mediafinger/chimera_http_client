@@ -1,13 +1,13 @@
 require "spec_helper"
 
 RSpec.shared_examples "a Request" do
-  it { expect(subject).to be_kind_of(HttpClient::Response) }
+  it { expect(subject).to be_kind_of(ChimeraHttpClient::Response) }
   it { expect(subject.code).to eq(response_code) }
   it { expect(subject.error?).to be false }
   it { expect { subject }.not_to raise_error }
 end
 
-describe HttpClient::Request do
+describe ChimeraHttpClient::Request do
   subject(:request) { described_class.new.run(url: url, method: :get) }
 
   let(:url) { "http://127.0.0.1/dummy" }
@@ -34,62 +34,62 @@ describe HttpClient::Request do
 
     before { allow(typhoeus_response).to receive(:timed_out?).and_return(true) }
 
-    it { expect(request).to be_kind_of(HttpClient::HttpTimeoutError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::TimeoutError) }
   end
 
   context "302" do
     let(:response_code) { 302 }
-    it { expect(request).to be_kind_of(HttpClient::HttpRedirectionError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::RedirectionError) }
   end
 
   context "400" do
     let(:response_code) { 400 }
-    it { expect(request).to be_kind_of(HttpClient::HttpBadRequestError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::BadRequestError) }
   end
 
   context "401" do
     let(:response_code) { 401 }
-    it { expect(request).to be_kind_of(HttpClient::HttpUnauthorizedError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::UnauthorizedError) }
   end
 
   context "403" do
     let(:response_code) { 403 }
-    it { expect(request).to be_kind_of(HttpClient::HttpForbiddenError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::ForbiddenError) }
   end
 
   context "404" do
     let(:response_code) { 404 }
-    it { expect(request).to be_kind_of(HttpClient::HttpNotFoundError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::NotFoundError) }
   end
 
   context "405" do
     let(:response_code) { 405 }
-    it { expect(request).to be_kind_of(HttpClient::HttpMethodNotAllowedError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::MethodNotAllowedError) }
   end
 
   context "409" do
     let(:response_code) { 409 }
-    it { expect(request).to be_kind_of(HttpClient::HttpResourceConflictError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::ResourceConflictError) }
   end
 
   context "422" do
     let(:response_code) { 422 }
-    it { expect(request).to be_kind_of(HttpClient::HttpUnprocessableEntityError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::UnprocessableEntityError) }
   end
 
   context "450" do
     let(:response_code) { 450 }
-    it { expect(request).to be_kind_of(HttpClient::HttpClientError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::ClientError) }
   end
 
   context "500" do
     let(:response_code) { 500 }
-    it { expect(request).to be_kind_of(HttpClient::HttpServerError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::ServerError) }
   end
 
   context "0" do
     let(:response_code) { 0 }
-    it { expect(request).to be_kind_of(HttpClient::HttpConnectionError) }
+    it { expect(request).to be_kind_of(ChimeraHttpClient::ConnectionError) }
   end
 
   context "when no logger is provided" do

@@ -1,4 +1,4 @@
-module HttpClient
+module ChimeraHttpClient
   class Request
     TIMEOUT_SECONDS = 5
 
@@ -38,33 +38,33 @@ module HttpClient
     end
 
     def exception_for(response)
-      return HttpTimeoutError.new(response) if response.timed_out?
+      return TimeoutError.new(response) if response.timed_out?
 
       case response.code.to_i
       when 301, 302, 303, 307
-        HttpRedirectionError.new(response)
+        RedirectionError.new(response)
       when 200..399
         nil
       when 400
-        HttpBadRequestError.new(response)
+        BadRequestError.new(response)
       when 401
-        HttpUnauthorizedError.new(response)
+        UnauthorizedError.new(response)
       when 403
-        HttpForbiddenError.new(response)
+        ForbiddenError.new(response)
       when 404
-        HttpNotFoundError.new(response)
+        NotFoundError.new(response)
       when 405
-        HttpMethodNotAllowedError.new(response)
+        MethodNotAllowedError.new(response)
       when 409
-        HttpResourceConflictError.new(response)
+        ResourceConflictError.new(response)
       when 422
-        HttpUnprocessableEntityError.new(response)
+        UnprocessableEntityError.new(response)
       when 400..499
-        HttpClientError.new(response)
+        ClientError.new(response)
       when 500..599
-        HttpServerError.new(response)
+        ServerError.new(response)
       else # response.code.zero?
-        HttpConnectionError.new(response)
+        ConnectionError.new(response)
       end
     end
   end

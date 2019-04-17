@@ -1,4 +1,4 @@
-# HttpClient TODOs
+# ChimeraHttpClient TODOs
 
 ## Bugs
 
@@ -49,9 +49,8 @@
 
 ### Release
 
-* rename to have a unique namespace
 * make repo public
 * hook up Travis-CI
-* ensure it runs with Ruby 2.3 and newer
+* ensure it runs with Ruby 2.5 and newer
 * get feedback
 * release to rubygems to add to the plethora of similar gems
