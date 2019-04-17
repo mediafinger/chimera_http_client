@@ -2,6 +2,10 @@ module ChimeraHttpClient
   class Request
     TIMEOUT_SECONDS = 3
 
+    def initialize(logger: nil)
+      @logger = logger
+    end
+
     def run(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
@@ -21,9 +25,13 @@ module ChimeraHttpClient
 
       result = nil
       request.on_complete do |response|
+        @logger&.info("Completed HTTP request: #{method.upcase} #{url} " \
+          "in #{response.total_time&.round(3)}sec with status code #{response.code}")
+
         result = on_complete_handler(response)
       end
 
+      @logger&.info("Starting HTTP request: #{method.upcase} #{url}")
       request.run
 
       result

@@ -5,9 +5,11 @@ module ChimeraHttpClient
   class Connection
     USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
 
-    def initialize(base_url:, user_agent: USER_AGENT, timeout: nil, verbose: false)
+    def initialize(base_url:, logger: nil, timeout: nil, user_agent: USER_AGENT, verbose: false)
       fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
+
       @base_url = base_url
+      @logger = logger
       @timeout = timeout
 
       define_bang_methods
@@ -19,7 +21,7 @@ module ChimeraHttpClient
     end
 
     def request
-      @request ||= Request.new
+      @request ||= Request.new(logger: @logger)
     end
 
     def get(endpoint, options = {})
