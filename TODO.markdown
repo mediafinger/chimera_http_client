@@ -2,8 +2,7 @@
 
 ## Bugs
 
-* The connection_specs are testing for a Hash in the body instead for serialized JSON content
-* The implementation seems to be buggy, not handling JSON as intended
+_none known_
 
 ## Features
 

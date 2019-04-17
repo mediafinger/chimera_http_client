@@ -73,7 +73,7 @@ class Users
   end
 
   def create(body:)
-    response = connection.post!('users', body: body.to_json) # body.to_json
+    response = connection.post!('users', body: body.to_json) # body.to_json (!!)
 
     user = response.parsed_body
     User.new(id: user['id'], name: user['name'], email: user['email'])
@@ -105,6 +105,8 @@ To create and fetch a user from a remote service with the `Users` wrapper listed
 ## The Request class
 
 Usually it does not have to be used directly. It is the class that executes the `Typhoeus::Requests`, raises `Errors` on failing and returns `Response` objects on successful calls.
+
+The `body` which it receives from the `Connection` class has to be in the in the (serialized) form in which the endpoint expects it. Usually this means you have to pass a JSON string to the `body` (it will **not** be serialized automatically).
 
 It will be expanded by a `.queue` method, that will queue (sic) calls and run them in parallel and not run every call directly, like the `.run` method does.
 

@@ -127,7 +127,7 @@ describe ChimeraHttpClient::Connection do
     subject(:post) { connection.post(endpoint, body: body, context: context) }
 
     let(:method)  { :post }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:params)  { {} }
     let(:headers) { request_headers }
 
@@ -157,7 +157,7 @@ describe ChimeraHttpClient::Connection do
 
     let(:method)  { :post }
     let(:params)  { {} }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:headers) { request_headers }
 
     context "success" do
@@ -240,11 +240,11 @@ describe ChimeraHttpClient::Connection do
 
   # PUT
   describe "#put" do
-    subject(:put) { connection.put(endpoint, body: response_body, context: context) }
+    subject(:put) { connection.put(endpoint, body: body, context: context) }
 
     let(:method)  { :put }
     let(:params)  { {} }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:headers) { request_headers }
 
     context "success" do
@@ -261,11 +261,11 @@ describe ChimeraHttpClient::Connection do
   end
 
   describe "#put!" do
-    subject(:put!) { connection.put!(endpoint, body: response_body, context: context) }
+    subject(:put!) { connection.put!(endpoint, body: body, context: context) }
 
     let(:method)  { :put }
     let(:params)  { {} }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:headers) { request_headers }
 
     context "success" do
@@ -282,11 +282,11 @@ describe ChimeraHttpClient::Connection do
 
   # PATCH
   describe "#patch" do
-    subject(:patch) { connection.patch(endpoint, body: response_body, context: context) }
+    subject(:patch) { connection.patch(endpoint, body: body, context: context) }
 
     let(:method)  { :patch }
     let(:params)  { {} }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:headers) { request_headers }
 
     context "success" do
@@ -303,11 +303,11 @@ describe ChimeraHttpClient::Connection do
   end
 
   describe "#patch!" do
-    subject(:patch!) { connection.patch!(endpoint, body: response_body, context: context) }
+    subject(:patch!) { connection.patch!(endpoint, body: body, context: context) }
 
     let(:method)  { :patch }
     let(:params)  { {} }
-    let(:body)    { response_body }
+    let(:body)    { response_json }
     let(:headers) { request_headers }
 
     context "success" do
