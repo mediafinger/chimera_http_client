@@ -2,8 +2,8 @@
 
 ## Bugs
 
-* calling `.to_json` once too often in `HttpError.to_json`?
-* add regression spec
+* The connection_specs are testing for a Hash in the body instead for serialized JSON content
+* The implementation seems to be buggy, not handling JSON as intended
 
 ## Features
 
@@ -25,9 +25,15 @@
 
 ### Custom Serializer
 
-* allow to pass custom (de)serializer
-* use custom serializer in #parsed_body instead of default JSON serializer
+* allow to pass custom serializer
+* use custom serializer instead of expecting a JSON (or other) body
 * set header for the serializer
+* add example to README
+
+### Custom De-serializer
+
+* allow to pass custom deserializer
+* use custom deserializer in #parsed_body instead of default JSON parsing
 * add example to README
 
 ### Queueing
