@@ -1,10 +1,10 @@
 # ChimeraHttpClient
 
-When starting to split monolithic apps into smaller services, you need an easy way to access the remote data from the other apps. This chimera_http_client gem should serve as a unified way to access endpoints from other apps. And what works for the internal communication between your own apps, will also work to work with external APIs that do not offer a client for simplified access.
+When starting to split monolithic apps into smaller services, you need an easy way to access the remote data from the other apps. This chimera_http_client gem should serve as a unified way to access endpoints from other apps. And what works for the internal communication between your own apps, will also work for external APIs that do not offer a client for simplified access.
 
 ## Dependencies
 
-The `chimera_http_client` gem is using the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/). This allows for fast requests, for caching, and for queueing requests to run them in parallel (queueing and parallel requests are not implemented in the gem yet).
+The `chimera_http_client` gem is using the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/). This allows for fast requests, for caching, and for queueing requests to run them in parallel (not all features are implemented in the gem yet).
 
 It does not have any other runtime dependencies.
 
@@ -25,13 +25,16 @@ response = connection.get!(endpoint, params: params)
 `base_url: 'http://localhost:3000/v1'`.
 
 On this connection object, you can call methods like `#get!` or `#post!` with an endpoint and an options hash as parameters, e.g.  
-`connection.get!("users/#{id}")` or  
+`connection.get!("users/#{id}")`  
+or  
 `connection.get(['users', id], options: { headers: { '	Accept-Charset' => 'utf-8' })`  
 
 Please take note that _the endpoint can be given as a String, a Symbol, or as an Array._  
 While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._
 When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._  
 On each request _the http-headers can be amended or overwritten_ completely or partially.
+
+### Basic auth
 
 In case you need to use an API that is protected by **basic_auth** just pass the credentials in the options hash:  
 `options: { username: 'admin', password: 'secret' }`
@@ -58,6 +61,8 @@ class Users
     @base_url = base_url
   end
 
+  # GET one user by id and instantiate a User
+  #
   def find(id:)
     response = connection.get!(['users', id])
 
@@ -68,6 +73,8 @@ class Users
     # handle / log / raise error
   end
 
+  # GET a list of users and instantiate an Array of Users
+  #
   def all(filter: nil, page: nil)
     params = {}
     params[:filter] = filter
@@ -82,6 +89,8 @@ class Users
     # handle / log / raise error
   end
 
+  # CREATE a new user by sending attributes in a JSON body and instantiate the new User
+  #
   def create(body:)
     response = connection.post!('users', body: body.to_json) # body.to_json (!!)
 
@@ -120,7 +129,9 @@ Usually it does not have to be used directly. It is the class that executes the 
 
 The `body` which it receives from the `Connection` class has to be in the in the (serialized) form in which the endpoint expects it. Usually this means you have to pass a JSON string to the `body` (it will **not** be serialized automatically).
 
-It will be expanded by a `.queue` method, that will queue (sic) calls and run them in parallel and not run every call directly, like the `.run` method does.
+> Upcoming feature:
+>
+> It will be expanded by a `.queue` method, that will queue (sic) calls and run them in parallel and not run every call directly, like the `.run` method does.
 
 ## The Response class
 
@@ -167,7 +178,7 @@ The error classes and their corresponding http error codes:
 
 Add this line to your application's Gemfile:
 
-    gem 'chimera_http_client', '~> 0.2'
+    gem 'chimera_http_client', '~> 0.3'
 
 And then execute:
 
