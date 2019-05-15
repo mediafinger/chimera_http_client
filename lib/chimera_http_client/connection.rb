@@ -25,50 +25,39 @@ module ChimeraHttpClient
     end
 
     def get(endpoint, options = {})
-      run_with_body(:get, endpoint, options.merge(body_optional: true))
+      run(:get, endpoint, options.merge(body_optional: true))
     end
 
     def post(endpoint, options = {})
-      run_with_body(:post, endpoint, options)
+      run(:post, endpoint, options)
     end
 
     def put(endpoint, options = {})
-      run_with_body(:put, endpoint, options)
+      run(:put, endpoint, options)
     end
 
     def patch(endpoint, options = {})
-      run_with_body(:patch, endpoint, options)
+      run(:patch, endpoint, options)
     end
 
     def delete(endpoint, options = {})
-      run_with_body(:delete, endpoint, options.merge(body_optional: true))
+      run(:delete, endpoint, options.merge(body_optional: true))
     end
 
     private
 
-    # Add default values to call options
-    def augmented_options(options)
-      options[:timeout] ||= @timeout
-
-      options
-    end
-
-    def run_with_body(method, endpoint, options = {})
+    def run(method, endpoint, options = {})
       body = extract_body(options)
       headers = extract_headers(options, default_headers)
 
       request.run(url: url(endpoint), method: method, body: body, options: augmented_options(options), headers: headers)
     end
 
-    # Build URL out of @base_url and endpoint given as String or Array, while trimming redundant "/"
-    def url(endpoint)
-      trimmed_endpoint = Array(endpoint).map { |e| trim(e) }
-      [@base_url.chomp("/"), trimmed_endpoint].flatten.reject(&:empty?).join("/")
-    end
+    # Add default values to call options
+    def augmented_options(options)
+      options[:timeout] ||= @timeout
 
-    # Remove leading and trailing "/" from a give part of a String (usually URL or endpoint)
-    def trim(element)
-      element.to_s.sub(%r{^\/}, "").chomp("/")
+      options
     end
 
     def extract_body(options)
@@ -85,6 +74,17 @@ module ChimeraHttpClient
 
     def default_headers
       { "Content-Type" => "application/json" }
+    end
+
+    # Build URL out of @base_url and endpoint given as String or Array, while trimming redundant "/"
+    def url(endpoint)
+      trimmed_endpoint = Array(endpoint).map { |e| trim(e) }
+      [@base_url.chomp("/"), trimmed_endpoint].flatten.reject(&:empty?).join("/")
+    end
+
+    # Remove leading and trailing "/" from a give part of a String (usually URL or endpoint)
+    def trim(element)
+      element.to_s.sub(%r{^\/}, "").chomp("/")
     end
 
     # get! post! put! patch! delete! return an Response when successful, but raise an Error otherwise
