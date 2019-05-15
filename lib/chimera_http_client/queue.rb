@@ -1,5 +1,5 @@
 module ChimeraHttpClient
-  class Queue < Connection
+  class Queue < Base
     def add(method, endpoint, options = {})
       http_method = method.downcase.to_sym
       options[:body_optional] = true if %i[get delete].include?(http_method)
