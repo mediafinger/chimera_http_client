@@ -35,16 +35,25 @@ _none known_
 * use custom deserializer in #parsed_body instead of default JSON parsing
 * add example to README
 
-### Queueing
+### Queueing / running in parallel
 
-* allow to queue multiple calls
-* execute (up to 10) calls in parallel
+* allow to queue multiple requests
+* execute (up to 20) requests in parallel
+* allow to pass one proc / block (for all requests) to use as on_complete handler for each request
+* add example to README
+
+### Queueing / run requests serialized
+
+* allow to queue multiple requests
+* execute (up to 5) queued requests
+* allow to pass a proc (per request) to use the response for the next request
+* or just explain how to code that yourself?
 * add example to README
 
 ### Caching
 
-* optional per connection or call
-* add example to README
+* ~optional per connection or call
+* ~add example to README~
 
 ### Timeout
 
@@ -60,3 +69,12 @@ _none known_
 * hook up Travis-CI
 * ensure it runs with Ruby 2.4 and newer
 * get feedback
+
+### File Uploads
+
+* add example to README
+
+### Streaming response bodies
+
+* enable to pass on_headers, on_body, on_complete procs
+* add example to README
