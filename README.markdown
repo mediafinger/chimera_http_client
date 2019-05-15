@@ -24,6 +24,8 @@ response = connection.get!(endpoint, params: params)
 `ChimeraHttpClient::Connection.new` expects an options hash as parameter. The only required option is **base_url** which should include the host, port and base path to the API endpoints you want to call, e.g.  
 `base_url: 'http://localhost:3000/v1'`.
 
+> Setting the `base_url` is meant to be a comfort feature, as you can then pass short endpoints to each request like `/users`. You could set an empty string `''` as `base_url` and then pass full qualified URLs as endpoint of the requests.
+
 On this connection object, you can call methods like `#get!` or `#post!` with an endpoint and an options hash as parameters, e.g.  
 `connection.get!("users/#{id}")`  
 or  
