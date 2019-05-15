@@ -14,6 +14,7 @@ module ChimeraHttpClient
         headers:         headers,
         timeout:         options[:timeout] || TIMEOUT_SECONDS,
         accept_encoding: "gzip",
+        cache:           options[:cache],
       }
 
       # Basic-auth support:

@@ -49,6 +49,12 @@ If you want to use a different timeout, you can pass the key `timeout` when init
 
 By default no logging is happening. If you need request logging, you can pass your custom Logger to the key `logger` when initializing the `Connection`. It will write to `logger.info` when starting and when completing a request.
 
+### Caching responses
+
+To cache all the reponses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
+
+Read more about how to use it: https://github.com/typhoeus/typhoeus#caching
+
 ### Example usage
 
 To use the gem, it is recommended to write wrapper classes for the endpoints used. While it would be possible to use the `get, get!, post, post!, put, put!, patch, patch!, delete, delete!` or also the bare `request.run` methods directly, wrapper classes will unify the usage pattern and be very convenient to use by veterans and newcomers to the team. A wrapper class could look like this:

@@ -40,6 +40,7 @@ RSpec.shared_examples "a Connection request with correct headers" do
         headers:         headers,
         timeout:         ChimeraHttpClient::Request::TIMEOUT_SECONDS,
         accept_encoding: "gzip",
+        cache:           nil,
       }
     )
   end

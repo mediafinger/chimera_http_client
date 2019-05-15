@@ -5,7 +5,7 @@ module ChimeraHttpClient
   class Connection
     USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
 
-    def initialize(base_url:, logger: nil, timeout: nil, user_agent: USER_AGENT, verbose: false)
+    def initialize(base_url:, logger: nil, timeout: nil, user_agent: USER_AGENT, verbose: false, cache: nil)
       fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
 
       @base_url = base_url
@@ -17,7 +17,7 @@ module ChimeraHttpClient
       Typhoeus::Config.user_agent = user_agent
       Typhoeus::Config.verbose = verbose
       Typhoeus::Config.memoize = false
-      # Typhoeus::Config.cache
+      Typhoeus::Config.cache = cache
     end
 
     def request
