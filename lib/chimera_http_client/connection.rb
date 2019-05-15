@@ -25,9 +25,7 @@ module ChimeraHttpClient
     end
 
     def get(endpoint, options = {})
-      headers = extract_headers(options, default_headers)
-
-      request.run(url: url(endpoint), method: :get, options: augmented_options(options), headers: headers)
+      run_with_body(:get, endpoint, options.merge(body_optional: true))
     end
 
     def post(endpoint, options = {})
