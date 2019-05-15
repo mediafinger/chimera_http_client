@@ -12,11 +12,15 @@ describe ChimeraHttpClient::Request do
     subject(:request) { described_class.new.create(url: "http://example.com", method: :get) }
 
     it "returns a Typhoeus::Request" do
-      expect(request).to be_a(Typhoeus::Request)
+      expect(request).to be_a(described_class)
     end
 
     it "does not have a response" do
-      expect(request.response).to eq(nil)
+      expect(request.request.response).to eq(nil)
+    end
+
+    it "does have an empty result" do
+      expect(request.result).to eq(nil)
     end
   end
 

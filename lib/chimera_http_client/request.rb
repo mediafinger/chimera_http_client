@@ -2,12 +2,16 @@ module ChimeraHttpClient
   class Request
     TIMEOUT_SECONDS = 3
 
+    attr_reader :request, :result
+
     def initialize(logger: nil)
       @logger = logger
     end
 
     def run(url:, method:, body: nil, options: {}, headers: {})
-      create(url: url, method: method, body: body, options: options, headers: headers).run
+      create(url: url, method: method, body: body, options: options, headers: headers)
+
+      @request.run
 
       @result
     end
@@ -28,10 +32,10 @@ module ChimeraHttpClient
       password = options.fetch(:password, nil)
       request_params[:userpwd] = "#{username}:#{password}" if username && password
 
-      request = Typhoeus::Request.new(url, request_params)
+      @request = Typhoeus::Request.new(url, request_params)
 
       @result = nil
-      request.on_complete do |response|
+      @request.on_complete do |response|
         @logger&.info("Completed HTTP request: #{method.upcase} #{url} " \
           "in #{response.total_time&.round(3)}sec with status code #{response.code}")
 
@@ -40,7 +44,7 @@ module ChimeraHttpClient
 
       @logger&.info("Starting HTTP request: #{method.upcase} #{url}")
 
-      request
+      self
     end
 
     private
