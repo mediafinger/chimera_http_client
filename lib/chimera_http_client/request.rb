@@ -7,6 +7,12 @@ module ChimeraHttpClient
     end
 
     def run(url:, method:, body: nil, options: {}, headers: {})
+      create(url: url, method: method, body: body, options: options, headers: headers).run
+
+      @result
+    end
+
+    def create(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
         body:            body,
@@ -24,18 +30,17 @@ module ChimeraHttpClient
 
       request = Typhoeus::Request.new(url, request_params)
 
-      result = nil
+      @result = nil
       request.on_complete do |response|
         @logger&.info("Completed HTTP request: #{method.upcase} #{url} " \
           "in #{response.total_time&.round(3)}sec with status code #{response.code}")
 
-        result = on_complete_handler(response)
+        @result = on_complete_handler(response)
       end
 
       @logger&.info("Starting HTTP request: #{method.upcase} #{url}")
-      request.run
 
-      result
+      request
     end
 
     private
