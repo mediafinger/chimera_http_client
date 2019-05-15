@@ -76,6 +76,9 @@ Style/NumericLiterals:
 Style/Semicolon:
   AllowAsExpressionSeparator: true
 
+Style/SymbolProc:
+  Enabled: false
+
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
 # SupportedStyles: comma, consistent_comma, no_comma
