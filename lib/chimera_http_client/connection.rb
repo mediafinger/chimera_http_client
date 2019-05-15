@@ -44,6 +44,42 @@ module ChimeraHttpClient
       run(:delete, endpoint, options.merge(body_optional: true))
     end
 
+    def queue(method, endpoint, options = {})
+      http_method = method.downcase.to_sym
+      options[:body_optional] = true if %i[get delete].include?(http_method)
+
+      body = extract_body(options)
+      headers = extract_headers(options, default_headers)
+
+      req = request.create(
+        url: url(endpoint),
+        method: http_method,
+        body: body,
+        options: augmented_options(options),
+        headers: headers
+      )
+
+      queued_requests << req
+    end
+
+    def execute_queue
+      queued_requests.each do |request|
+        hydra.queue(request)
+      end
+
+      hydra.run
+
+      responses = queued_requests.map { |request| request.response.body }
+
+      empty_queue
+
+      responses
+    end
+
+    def empty_queue
+      @queued_requests = []
+    end
+
     private
 
     def run(method, endpoint, options = {})
@@ -85,6 +121,14 @@ module ChimeraHttpClient
     # Remove leading and trailing "/" from a give part of a String (usually URL or endpoint)
     def trim(element)
       element.to_s.sub(%r{^\/}, "").chomp("/")
+    end
+
+    def queued_requests
+      @queued_requests ||= []
+    end
+
+    def hydra
+      @hydra ||= Typhoeus::Hydra.new
     end
 
     # get! post! put! patch! delete! return an Response when successful, but raise an Error otherwise
