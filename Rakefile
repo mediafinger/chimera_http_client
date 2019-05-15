@@ -5,7 +5,12 @@ RSpec::Core::RakeTask.new(:rspec)
 
 desc "Open a console with the ChimeraHttpClient loaded"
 task :console do
-  system "irb -r lib/chimera_http_client.rb"
+  puts "Console with the gem and awesome_print loaded:"
+  ARGV.clear
+  require "irb"
+  require "ap"
+  load "lib/chimera_http_client.rb"
+  IRB.start
 end
 
 desc "Run Rubocop"
