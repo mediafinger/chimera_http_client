@@ -15,11 +15,11 @@ _none known_
 
 ### Logger
 
-* ~allow to pass a logger~
-* ~add logger.info when starting a http call~
-* ~add logger.info when finishing a successful http call~
-* ~include the total_time of the requests in the log~
-* ~add (example) to README~
+* ~~allow to pass a logger~~
+* ~~add logger.info when starting a http call~~
+* ~~add logger.info when finishing a successful http call~~
+* ~~include the total_time of the requests in the log~~
+* ~~add (example) to README~~
 * add logger.warn / .error for error cases (?)
 
 ### Custom Serializer
@@ -37,8 +37,8 @@ _none known_
 
 ### Queueing / running in parallel
 
-* allow to queue multiple requests
-* execute (up to 20) requests in parallel
+* ~~allow to queue multiple requests~~
+* ~~execute (up to 200) requests in parallel~~
 * allow to pass one proc / block (for all requests) to use as on_complete handler for each request
 * add example to README
 
@@ -52,20 +52,20 @@ _none known_
 
 ### Caching
 
-* ~optional per connection or call
-* ~add example to README~
+* ~~optional per connection or call~~
+* ~~add example to README~~
 
 ### Timeout
 
-* ~allow to set custom timeout per connection~
-* ~allow to set custom timeout per call~
-* ~add (example) to README~
+* ~~allow to set custom timeout per connection~~
+* ~~allow to set custom timeout per call~~
+* ~~add (example) to README~~
 
 ### Release
 
-* ~rename module to have unique namespace~
-* ~release to rubygems to add to the plethora of similar gems~
-* ~make repo public~
+* ~~rename module to have unique namespace~~
+* ~~release to rubygems to add to the plethora of similar gems~~
+* ~~make repo public~~
 * hook up Travis-CI
 * ensure it runs with Ruby 2.4 and newer
 * get feedback
