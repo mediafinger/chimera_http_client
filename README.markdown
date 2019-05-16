@@ -1,6 +1,10 @@
 # ChimeraHttpClient
 
-When starting to split monolithic apps into smaller services, you need an easy way to access the remote data from the other apps. This chimera_http_client gem should serve as a unified way to access endpoints from other apps. And what works for the internal communication between your own apps, will also work for external APIs that do not offer a client for simplified access.
+When starting to split monolithic apps into smaller services, you need an easy way to access the remote data from the other apps. This **chimera_http_client gem** should serve as **a comfortable and unifying way** to access endpoints from other apps.
+
+And what works for the internal communication between your own apps, will also work for external APIs that do not offer a client for simplified access.
+
+It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance.
 
 ## Dependencies
 
@@ -8,9 +12,42 @@ The `chimera_http_client` gem is using the _libcurl_ wrapper [**Typhoeus**](http
 
 It does not have any other runtime dependencies.
 
-### optional
+### ENV variables
 
 Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `true` (or `'true'`) will provide more detailed error messages for logging and also add additional information to the Error JSON. It is recommended to use this only in development environments.
+
+## Table of Contents
+
+<!-- TOC depthFrom:1 depthTo:4 withLinks:1 updateOnSave:0 orderedList:0 -->
+
+- [ChimeraHttpClient](#chimerahttpclient)
+	- [Table of Contents](#table-of-contents)
+	- [Dependencies](#dependencies)
+		- [ENV variables](#env-variables)
+	- [The Connection class](#the-connection-class)
+		- [Initialization](#initialization)
+			- [Mandatory initialization parameter `base_url`](#mandatory-initialization-parameter-baseurl)
+			- [Optional initialization parameters](#optional-initialization-parameters)
+		- [Request methods](#request-methods)
+			- [Mandatory request parameter `endpoint`](#mandatory-request-parameter-endpoint)
+			- [Optional request parameters](#optional-request-parameters)
+			- [Basic auth](#basic-auth)
+			- [Timeout duration](#timeout-duration)
+			- [Custom logger](#custom-logger)
+			- [Caching responses](#caching-responses)
+		- [Example usage](#example-usage)
+	- [The Request class](#the-request-class)
+	- [The Response class](#the-response-class)
+	- [Error classes](#error-classes)
+	- [The Queue class](#the-queue-class)
+		- [Queueing requests](#queueing-requests)
+		- [Executing requests in parallel](#executing-requests-in-parallel)
+	- [Installation](#installation)
+	- [Maintainers and Contributors](#maintainers-and-contributors)
+		- [Roadmap](#roadmap)
+	- [Chimera](#chimera)
+
+<!-- /TOC -->
 
 ## The Connection class
 
@@ -21,39 +58,118 @@ connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost/names
 response = connection.get!(endpoint, params: params)
 ```
 
-`ChimeraHttpClient::Connection.new` expects an options hash as parameter. The only required option is **base_url** which should include the host, port and base path to the API endpoints you want to call, e.g.  
-`base_url: 'http://localhost:3000/v1'`.
+### Initialization
 
-> Setting the `base_url` is meant to be a comfort feature, as you can then pass short endpoints to each request like `/users`. You could set an empty string `''` as `base_url` and then pass full qualified URLs as endpoint of the requests.
+`connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', logger: logger, cache: cache)`
 
-On this connection object, you can call methods like `#get!` or `#post!` with an endpoint and an options hash as parameters, e.g.  
-`connection.get!("users/#{id}")`  
-or  
-`connection.get(['users', id], options: { headers: { '	Accept-Charset' => 'utf-8' })`  
+#### Mandatory initialization parameter `base_url`
 
-Please take note that _the endpoint can be given as a String, a Symbol, or as an Array._  
-While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._
-When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._  
-On each request _the http-headers can be amended or overwritten_ completely or partially.
+The mandatory parameter is **base_url** which should include the host, port and base path to the API endpoints you want to call, e.g. `'http://localhost:3000/v1'`.
 
-### Basic auth
+Setting the `base_url` is meant to be a comfort feature, as you can then pass short endpoints to each request like `/users`. You could set an empty string `''` as `base_url` and then pass full qualified URLs as endpoint of the requests.
 
-In case you need to use an API that is protected by **basic_auth** just pass the credentials in the options hash:  
-`options: { username: 'admin', password: 'secret' }`
+#### Optional initialization parameters
 
-### Timeout duration
+The optional parameters are:
+
+* `logger` - an instance of a logger class that implements `#info` and `#warn` methods
+* `timeout` - the timeout for all requests, can be overwritten in any request, the default are 3 seconds
+* `user_agent` - if you would like your calls to identify with a specific user agent
+* `verbose` - the default is `false`, set it to true while debugging issues
+* `cache` - an instance of your cache solution, can be overwritten in any request
+
+### Request methods
+
+The available methods are:
+
+* `get` / `get!`
+* `post` / `post!`
+* `put` / `put`
+* `patch` / `patch!`
+* `delete` / `delete!`
+
+where the methods ending on a _bang!_ will raise an error (which you should handle in your application) while the others will return an error object.
+
+#### Mandatory request parameter `endpoint`
+
+The `base_url` set in the connection will together with the `endpoint` determine the URL to make a request to.
+
+```ruby
+connection.get([:users, id])
+connection.get(["users", id])
+connection.get("users/#{id}")
+connection.get("/users/#{id}")
+```
+
+All forms above ave valid and will make a request to the same URL.
+
+* Please take note that _the endpoint can be given as a String, a Symbol, or an Array._  
+* While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._  
+* When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._  
+
+#### Optional request parameters
+
+All request methods expect a mandatory `endpoint` and an optional hash as parameters. In the latter the following keywords are treated specially:
+
+* `body` - the mandatory body of a `post`, `put` or `patch` request
+* `headers` - a hash of HTTP headers
+* `params` - parameters of a HTTP request
+* `username` - used for a BasicAuth login
+* `password` - used for a BasicAuth login
+* `timeout` - set a custom timeout per request (the default is 3 seconds)
+* `cache` - optionally overwrite the cache store set in `Connection` in any request
+
+Example:
+
+```ruby
+connection.post(
+  :users,
+  body: { name: "Andy" },
+  params: { origin: `Twitter`},
+  headers: { "Authorization" => "Bearer #{token}" },
+  timeout: 10,
+  cache: nil
+)
+```
+
+#### Basic auth
+
+In case you need to use an API that is protected by **basic_auth** just pass the credentials as optional parameters:  
+`username: 'admin', password: 'secret'`
+
+#### Timeout duration
 
 The default timeout duration is **3 seconds**.
 
 If you want to use a different timeout, you can pass the key `timeout` when initializing the `Connection`. You can also overwrite it on every call.
 
-### Custom logger
+#### Custom logger
 
 By default no logging is happening. If you need request logging, you can pass your custom Logger to the key `logger` when initializing the `Connection`. It will write to `logger.info` when starting and when completing a request.
 
-### Caching responses
+#### Caching responses
 
 To cache all the reponses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
+
+It could be an instance of an implementation as simple as this:
+
+```ruby
+class Cache
+  def initialize
+    @memory = {}
+  end
+
+  def get(request)
+    @memory[request]
+  end
+
+  def set(request, response)
+    @memory[request] = response
+  end
+end
+```
+
+Or use an adapter for Dalli, Redis, or Rails cache that also support an optional time-to-live `default_ttl` parameter.
 
 Read more about how to use it: https://github.com/typhoeus/typhoeus#caching
 
@@ -182,6 +298,52 @@ The error classes and their corresponding http error codes:
     ServerError               # 500..599
     TimeoutError              # timeout
 
+## The Queue class
+
+Instead of making single requests immediately, the ChimeraHttpClient allows to queue requests and run them in **parallel**.
+
+The number of parallel requests is limited by your system. There is a hard limit for 200 concurrent requests. You will have to measure yourself where the sweet spot for optimal performance is - and when things start to get flaky. I recommend to queue not much more than 20 requests before running them.
+
+### Queueing requests
+
+The initializer of the `Queue` class expects and handles the same parameters as the `Connection` class.
+
+```ruby
+queue = ChimeraHttpClient::Queue.new(base_url: 'http://localhost:3000/v1')
+```
+
+`queue.add` expects and handles the same parameters as the requests methods of a connection.
+
+```ruby
+queue.add(method, endpoint, options = {})
+```
+
+The only difference is that a parameter to set the HTTP method has to prepended. Valid options for `method` are:
+
+* `:get` / `'get'` / `'GET'`
+* `:post` / `'post'` / `'POST'`
+* `:put` / `'put'` / `'PUT'`
+* `:patch` / `'patch'` / `'PATCH'`
+* `:delete` / `'delete'` / `'DELETE'`
+
+### Executing requests in parallel
+
+Once the queue is filled, run all the requests concurrently with:
+
+```ruby
+responses = queue.execute
+```
+
+`responses` will contain an Array of `ChimeraHttpClient::Response` objects when all calls succeed. If any calls fail, the Array will also contain `ChimeraHttpClient::Error` objects. It is in your responsibility to handle the errors.
+
+> Tip: every `Response` and every `Error` make the underlying `Typheous::Request` available over `object.response.request`, which could help with debugging, or with building your own retry mechanism.
+
+### Empty the queue
+
+The queue is emptied after execution. You could also empty it at any other point before by calling `queue.empty`.
+
+To inspect the requests waiting for execution, call `queue.queued_requests`.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -198,7 +360,7 @@ When updating the version, do not forget to run
 
 ## Maintainers and Contributors
 
-After checking out the repo, run `rake` to run the **tests and rubocop**.
+After checking out the repo, run `bundle install` and then `bundle execute rake` to run the **tests and rubocop**.
 
 You can also run `rake console` to open an irb session with the `ChimeraHttpClient` pre-loaded that will allow you to experiment.
 
