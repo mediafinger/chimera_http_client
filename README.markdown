@@ -169,7 +169,13 @@ class Cache
 end
 ```
 
-Or use an adapter for Dalli, Redis, or Rails cache that also support an optional time-to-live `default_ttl` parameter.
+Or use an adapter for Dalli, Redis, or Rails cache that also support an optional time-to-live `default_ttl` parameter. If you use `Rails.cache` with the adapter `:memory_store` or `:mem_cache_store`, the object you would have to pass looks like this:
+
+```ruby
+require "typhoeus/cache/rails"
+
+cache: Typhoeus::Cache::Rails.new(Rails.cache, default_ttl: 600) # 600 seconds
+```
 
 Read more about how to use it: https://github.com/typhoeus/typhoeus#caching
 
@@ -348,7 +354,7 @@ To inspect the requests waiting for execution, call `queue.queued_requests`.
 
 Add this line to your application's Gemfile:
 
-    gem 'chimera_http_client', '~> 0.3'
+    gem 'chimera_http_client', '~> 0.5'
 
 And then execute:
 
