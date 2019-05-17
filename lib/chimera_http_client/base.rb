@@ -27,7 +27,9 @@ module ChimeraHttpClient
     def extract_body(options)
       body = options.delete(:body)
       body_optional = options.delete(:body_optional)
+
       fail(ChimeraHttpClient::ParameterMissingError, "body expected, but not given") if body.nil? && !body_optional
+
       body
     end
 

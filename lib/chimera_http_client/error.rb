@@ -29,7 +29,7 @@ module ChimeraHttpClient
       error
     end
 
-    def to_json
+    def to_json(_options = {})
       error = {
         code:        code,
         error_class: self.class.name,

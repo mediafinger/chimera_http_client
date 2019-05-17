@@ -5,10 +5,13 @@ AllCops:
       - vendor/**/*
       - config.ru
 
+Layout/AlignHash:
+  Enabled: false
+
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: special_inside_parentheses, consistent, align_braces
-Layout/IndentHash:
+Layout/IndentFirstHashElement:
   EnforcedStyle: consistent
 
 Metrics/AbcSize:
