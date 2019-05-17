@@ -64,19 +64,26 @@ describe ChimeraHttpClient::Connection do
   let(:context) { double("context") }
   let(:request_headers) { { "Content-Type" => "application/json" } }
 
-  describe ".new" do
+  describe ".new (ensure methods are generated correctly)" do
     it { expect(connection).to be_kind_of ChimeraHttpClient::Connection }
+
     it { expect(connection).to respond_to(:request) }
     it { expect(connection).to respond_to(:get) }
     it { expect(connection).to respond_to(:post) }
     it { expect(connection).to respond_to(:put) }
     it { expect(connection).to respond_to(:patch) }
     it { expect(connection).to respond_to(:delete) }
+    it { expect(connection).to respond_to(:head) }
+    it { expect(connection).to respond_to(:options) }
+    it { expect(connection).to respond_to(:trace) }
     it { expect(connection).to respond_to(:get!) }
     it { expect(connection).to respond_to(:post!) }
     it { expect(connection).to respond_to(:put!) }
     it { expect(connection).to respond_to(:patch!) }
     it { expect(connection).to respond_to(:delete!) }
+    it { expect(connection).to respond_to(:head!) }
+    it { expect(connection).to respond_to(:options!) }
+    it { expect(connection).to respond_to(:trace!) }
 
     it { expect(connection.request).to be_kind_of ChimeraHttpClient::Request }
   end

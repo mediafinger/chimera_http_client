@@ -2,20 +2,15 @@ module ChimeraHttpClient
   class Queue < Base
     def add(method, endpoint, options = {})
       http_method = method.downcase.to_sym
-      options[:body_optional] = true if %i[get delete].include?(http_method)
+      options[:body_optional] = true if %i[get delete head options trace].include?(http_method)
 
-      body = extract_body(options)
-      headers = extract_headers(options, default_headers)
-
-      req = Request.new(logger: @logger).create(
-        url: url(endpoint),
+      queued_requests << create_request(
         method: http_method,
-        body: body,
-        options: augmented_options(options),
-        headers: headers
+        url: url(endpoint),
+        body: extract_body(options),
+        headers: extract_headers(options, default_headers),
+        options: augmented_options(options)
       )
-
-      queued_requests << req
     end
 
     def execute
@@ -41,6 +36,16 @@ module ChimeraHttpClient
     end
 
     private
+
+    def create_request(method:, url:, body:, headers:, options:)
+      Request.new(logger: @logger).create(
+        method: method,
+        url: url,
+        body: body,
+        headers: headers,
+        options: options
+      )
+    end
 
     def hydra
       @hydra ||= Typhoeus::Hydra.new

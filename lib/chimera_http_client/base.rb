@@ -9,10 +9,10 @@ module ChimeraHttpClient
       @logger = logger
       @timeout = timeout
 
+      Typhoeus::Config.cache = cache
+      Typhoeus::Config.memoize = false # hydra setting, prevents a possible memory leak
       Typhoeus::Config.user_agent = user_agent
       Typhoeus::Config.verbose = verbose
-      Typhoeus::Config.memoize = false
-      Typhoeus::Config.cache = cache
     end
 
     private
