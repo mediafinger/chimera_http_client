@@ -1,6 +1,8 @@
+require "bundler/audit/task"
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 
+Bundler::Audit::Task.new
 RSpec::Core::RakeTask.new(:rspec)
 
 desc "Open a console with the ChimeraHttpClient loaded"
@@ -24,4 +26,4 @@ task :rubocopa do
 end
 
 desc "Run all the tests"
-task default: %i[rspec rubocop]
+task default: %i[rspec rubocop bundle:audit]
