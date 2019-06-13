@@ -4,11 +4,11 @@ When starting to split monolithic apps into smaller services, you need an easy w
 
 And what works for the internal communication between your own apps, will also work for external APIs that do not offer a client for simplified access.
 
-It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance.
+It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance and simple aggregating of distributed data.
 
 ## Dependencies
 
-The `chimera_http_client` gem is using the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/). This allows for fast requests, for caching, and for queueing requests to run them in parallel (not all features are implemented in the gem yet).
+The `chimera_http_client` gem is wrapping the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/) to have a more convenient interface. This allows for fast requests, for caching responses, and for queueing requests to run them in parallel. Connections are persistent by default, which saves subsequent requests from establishing a connection.
 
 It does not have any other runtime dependencies.
 

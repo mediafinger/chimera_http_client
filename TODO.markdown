@@ -29,6 +29,30 @@ _none known_
 * allow to pass one proc / block per requests) to use as on_complete handler
 * add example to README
 
+### Add server for testing
+
+* add a simple (Sinatra) server for testing
+* run (all?) tests against the server (with capybara_discoball?)
+* make server also available for console testing
+* add example to README
+
+### Enable more Typhoeus functionality
+
+* accept_encoding: "gzip"
+* connecttimeout: 1
+* cookiefile: "/path/to/file"
+* cookiejar: "/path/to/file"
+* followlocation: true
+* forbid_reuse: true
+* memoize: false
+* ssl_verifyhost: 0
+* ssl_verifypeer: false
+* verbose: true
+
+* Cache apdapters
+* or enable to access the Typhoeos directly through Chimera?
+* add example to README
+
 ### Custom Serializer
 
 * allow to pass custom serializer
@@ -72,10 +96,31 @@ _none known_
 * ensure it runs with Ruby 2.4 and newer
 * get feedback
 
+### Retry Requests
+
+* either leverage Hydra to retry failed calls
+  * configure number of retries
+  * configure delay between retries
+  * retry idempotent calls GET, PUT, DELETE, HEAD automatically
+* maybe implement retries with wait and Redis (external dependency!)
+* or document in README how to build a retry mechanism
+  * https://gist.github.com/kunalmodi/2939288
+
 ### Queueing / run requests serialized
 
 * allow to queue multiple requests
 * execute (up to 5) queued requests
 * allow to pass a on_handler proc (per request) that could involve queueing new requests
 * or just explain how to code that yourself?
+* add example to README
+
+### Rate limiting
+
+* implement with different strategies
+  * max concurrent requests
+  * max requests in fixed time frame
+  * max requests in sliding time window
+* implement counters in Redis (external dependency!)
+* add metrics / monitoring
+* don't add throttling?
 * add example to README
