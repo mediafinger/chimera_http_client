@@ -38,7 +38,13 @@ module ChimeraHttpClient
     private
 
     def create_request(method:, url:, body:, headers:, options:)
-      Request.new(logger: @logger).create(
+      class_options = {
+        logger: @logger,
+        error_deserializer: ::ChimeraHttpClient::Deserializer.json_error,
+        response_deserializer: ::ChimeraHttpClient::Deserializer.json_response,
+      }
+
+      Request.new(class_options).create(
         method: method,
         url: url,
         body: body,

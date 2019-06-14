@@ -1,14 +1,15 @@
 module ChimeraHttpClient
   class Error < StandardError
-    attr_reader :body, :code, :time, :response
+    attr_reader :body, :code, :time, :response, :deserializer
     alias message body
 
-    def initialize(response)
+    def initialize(response, options = {})
       @body     = response.body
       @code     = response.code
       @time     = response.options&.fetch(:total_time, nil)
       @response = response # contains the request
-      super
+
+      @deserializer = options[:error_deserializer]
     end
 
     def error?
@@ -16,9 +17,7 @@ module ChimeraHttpClient
     end
 
     def parsed_body
-      JSON.parse(body)
-    rescue JSON::ParserError
-      { "non_json_body" => body }
+      deserializer.call(body)
     end
 
     def to_s

@@ -1,18 +1,18 @@
 module ChimeraHttpClient
   class Response
-    attr_reader :body, :code, :time, :response
+    attr_reader :body, :code, :time, :response, :deserializer
 
-    def initialize(response)
+    def initialize(response, options = {})
       @body     = response.body
       @code     = response.code
       @time     = response.total_time
       @response = response # contains the request
+
+      @deserializer = options[:response_deserializer]
     end
 
     def parsed_body
-      JSON.parse(body)
-    rescue JSON::ParserError => e
-      raise ChimeraHttpClient::JsonParserError, "Could not parse body as JSON: #{body}, error: #{e.message}"
+      deserializer.call(body)
     end
 
     def error?

@@ -15,9 +15,10 @@ RSpec.shared_examples "a Response" do
 end
 
 describe ChimeraHttpClient::Response do
-  subject(:response) { described_class.new(typhoeus_response) }
+  subject(:response) { described_class.new(typhoeus_response, response_deserializer: deserializer) }
 
   let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
+  let(:deserializer) { ::ChimeraHttpClient::Deserializer.json_response }
 
   let(:response_code) { 200 }
   let(:response_body) { { "id" => 42, "name" => "Andy" } }

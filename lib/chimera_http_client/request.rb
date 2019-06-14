@@ -4,8 +4,9 @@ module ChimeraHttpClient
 
     attr_reader :request, :result
 
-    def initialize(logger: nil)
-      @logger = logger
+    def initialize(options = {})
+      @logger = options[:logger]
+      @options = options
     end
 
     def run(url:, method:, body: nil, options: {}, headers: {})
@@ -50,39 +51,39 @@ module ChimeraHttpClient
     private
 
     def on_complete_handler(response)
-      return Response.new(response) if response.success?
+      return Response.new(response, @options) if response.success?
 
       exception_for(response)
     end
 
     def exception_for(response)
-      return TimeoutError.new(response) if response.timed_out?
+      return TimeoutError.new(response, @options) if response.timed_out?
 
       case response.code.to_i
       when 301, 302, 303, 307
-        RedirectionError.new(response)
+        RedirectionError.new(response, @options)
       when 200..399
         nil
       when 400
-        BadRequestError.new(response)
+        BadRequestError.new(response, @options)
       when 401
-        UnauthorizedError.new(response)
+        UnauthorizedError.new(response, @options)
       when 403
-        ForbiddenError.new(response)
+        ForbiddenError.new(response, @options)
       when 404
-        NotFoundError.new(response)
+        NotFoundError.new(response, @options)
       when 405
-        MethodNotAllowedError.new(response)
+        MethodNotAllowedError.new(response, @options)
       when 409
-        ResourceConflictError.new(response)
+        ResourceConflictError.new(response, @options)
       when 422
-        UnprocessableEntityError.new(response)
+        UnprocessableEntityError.new(response, @options)
       when 400..499
-        ClientError.new(response)
+        ClientError.new(response, @options)
       when 500..599
-        ServerError.new(response)
+        ServerError.new(response, @options)
       else # response.code.zero?
-        ConnectionError.new(response)
+        ConnectionError.new(response, @options)
       end
     end
   end
