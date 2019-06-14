@@ -5,14 +5,17 @@ rvm:
   - 2.6
   - 2.5
   - 2.4
-  # - jruby
-  # - truffleruby
+  - jruby
+  - truffleruby
+
+matrix:
+  allow_failures:
+    - rvm: jruby
+    - rvm: truffleruby
+  fast_finish: true
 
 before_install:
   - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
-  # - gem update --system
-  # - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
-  # - gem install bundler -v "~> 1.0"
 
 bundler_args: --jobs 3 --retry 3
 
