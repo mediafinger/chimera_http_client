@@ -1,8 +1,10 @@
 module ChimeraHttpClient
-  ROOT_PATH = File.expand_path("..", __dir__)
+  spec = Gem::Specification.find_by_name("chimera_http_client")
+  gem_root = spec.gem_dir
 
   require "json"
   require "typhoeus"
 
-  Dir.glob(ROOT_PATH + "/lib/chimera_http_client/*.rb") { |file| require file }
+  librbfiles = File.join(gem_root, "lib", "chimera_http_client", "*.rb")
+  Dir.glob(librbfiles) { |file| require file; puts "required: #{file}" }
 end
