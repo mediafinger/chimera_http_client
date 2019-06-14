@@ -6,11 +6,15 @@ And what works for the internal communication between your own apps, will also w
 
 It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance and simple aggregating of distributed data.
 
+[![Build Status](https://travis-ci.com/mediafinger/chimera_http_client.svg?branch=master)](https://travis-ci.com/mediafinger/chimera_http_client)
+
 ## Dependencies
 
-The `chimera_http_client` gem is wrapping the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/) to have a more convenient interface. This allows for fast requests, for caching responses, and for queueing requests to run them in parallel. Connections are persistent by default, which saves subsequent requests from establishing a connection.
+The `chimera_http_client` gem is wrapping the **libcurl** wrapper [**Typhoeus**](https://typhoeus.github.io/) to have a more convenient interface. This allows for fast requests, for caching responses, and for queueing requests to run them in parallel. Connections are persistent by default, which saves subsequent requests from establishing a connection.
 
-The only other runtime dependency is Ruby's latest code loader [_zeitwerk_](https://github.com/fxn/zeitwerk) which is also part of Rails 6.
+The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](https://github.com/fxn/zeitwerk) which is also part of Rails 6.
+
+All Ruby versions equal to or newer than **2.4** are supported.
 
 ### ENV variables
 
