@@ -2,17 +2,18 @@ module ChimeraHttpClient
   class Base
     USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
 
-    def initialize(base_url:, logger: nil, timeout: nil, user_agent: USER_AGENT, verbose: false, cache: nil)
-      fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if base_url.nil?
+    def initialize(options = {})
+      fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if options[:base_url].nil?
 
-      @base_url = base_url
-      @logger = logger
-      @timeout = timeout
+      @base_url = options.fetch(:base_url)
+      @deserializer = options.fetch(:deserializer, {})
+      @logger = options[:logger]
+      @timeout = options[:timeout]
 
-      Typhoeus::Config.cache = cache
+      Typhoeus::Config.cache = options[:cache]
       Typhoeus::Config.memoize = false # hydra setting, prevents a possible memory leak
-      Typhoeus::Config.user_agent = user_agent
-      Typhoeus::Config.verbose = verbose
+      Typhoeus::Config.user_agent = options.fetch(:user_agent, USER_AGENT)
+      Typhoeus::Config.verbose = options.fetch(:verbose, false)
     end
 
     private
