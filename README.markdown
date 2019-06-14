@@ -10,7 +10,7 @@ It offers an **easy to learn interface** and **nice error handling**. And it ena
 
 The `chimera_http_client` gem is wrapping the _libcurl_ wrapper [**Typhoeus**](https://typhoeus.github.io/) to have a more convenient interface. This allows for fast requests, for caching responses, and for queueing requests to run them in parallel. Connections are persistent by default, which saves subsequent requests from establishing a connection.
 
-It does not have any other runtime dependencies.
+The only other runtime dependency is Ruby's latest code loader [_zeitwerk_](https://github.com/fxn/zeitwerk) which is also part of Rails 6.
 
 ### ENV variables
 
