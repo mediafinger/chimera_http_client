@@ -27,12 +27,20 @@ class UsersServer < Sinatra::Base
       return { message: "error #{params[:code]}" }.to_json
     end
 
-    get "/users" do
-      content_type :json
-
+    post "/users" do
       if params[:unauthorized]
         status 403
-        return { message: "Your favorite fake error message" }.to_json
+        return { message: "No access rights" }.to_json
+      else
+        status 201
+        return RESPONSE_BODY[:entries].last.to_json
+      end
+    end
+
+    get "/users" do
+      if params[:unauthorized]
+        status 403
+        return { message: "No access rights" }.to_json
       else
         offset, limit = *pagination
 
@@ -44,8 +52,6 @@ class UsersServer < Sinatra::Base
     end
 
     get "/users/:id" do
-      content_type :json
-
       if params[:fake_error]
         status 422
         return { message: "Your favorite fake error message" }.to_json
@@ -53,11 +59,41 @@ class UsersServer < Sinatra::Base
         id = params["id"]
         user = RESPONSE_BODY[:entries].detect { |u| u[:id] == id }
 
-        return user.to_json if user
+        return user.to_json unless user.nil?
 
         status 404
         return { message: "User with id = #{id} not found" }.to_json
       end
+    end
+
+    patch "/users/:id" do
+      id = params["id"]
+      user = RESPONSE_BODY[:entries].detect { |u| u[:id] == id }
+
+      return user.to_json unless user.nil?
+
+      status 404
+      return { message: "User with id = #{id} not found" }.to_json
+    end
+
+    put "/users/:id" do
+      id = params["id"]
+      user = RESPONSE_BODY[:entries].detect { |u| u[:id] == id }
+
+      return user.to_json unless user.nil?
+
+      status 404
+      return { message: "User with id = #{id} not found" }.to_json
+    end
+
+    delete "/users/:id" do
+      id = params["id"]
+      user = RESPONSE_BODY[:entries].detect { |u| u[:id] == id }
+
+      return user.to_json unless user.nil?
+
+      status 404
+      return { message: "User with id = #{id} not found" }.to_json
     end
   end
 
@@ -65,28 +101,28 @@ class UsersServer < Sinatra::Base
     {
       entries: [
         {
-          email: "no_one@example.com",
           id: "1",
+          email: "no_one@example.com",
           name: "Arya Stark",
         },
         {
-          email: "jon_snow@example.com",
           id: "22",
+          email: "jon_snow@example.com",
           name: "Jon Snow",
         },
         {
-          email: "sansa_stark@example.com",
           id: "333",
+          email: "sansa_stark@example.com",
           name: "Sansa Stark",
         },
         {
-          email: "melisandre@example.com",
           id: "4444",
+          email: "melisandre@example.com",
           name: "The Red Woman",
         },
         {
-          email: "sam@example.com",
           id: "55555",
+          email: "sam@example.com",
           name: "Sam Tarwell",
         },
       ],
