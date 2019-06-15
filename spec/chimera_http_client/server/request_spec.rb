@@ -45,7 +45,7 @@ describe ChimeraHttpClient::Request do
     end
 
     # the TimeoutError tests pass, but they take longer than the rest of the whole test suite
-    # and as they basically only repeat what the other tests test, they are on pending
+    # and as they basically only repeat what the other tests test, they are usually excluded
     pending "Timeout" do
       let(:url) { "#{UsersServer.endpoint_url}/api/v1/errors/timeout" }
       let(:response_code) { nil }
