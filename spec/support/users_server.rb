@@ -97,6 +97,12 @@ class UsersServer < Sinatra::Base
     end
   end
 
+  get "/html" do
+    content_type "text/html"
+    status 200
+    return "<html><body>Hello :-)</body></html>"
+  end
+
   RESPONSE_BODY ||=
     {
       entries: [

@@ -1,7 +1,7 @@
 require "server_spec_helper"
 
 context "when http errors happen" do
-  subject(:api_error) { connection.get("errors/#{failure_code}") }
+  subject(:error) { connection.get("errors/#{failure_code}") }
 
   let(:connection) { ChimeraHttpClient::Connection.new(base_url: base_url, deserializer: deserializer, timeout: timeout) }
   let(:base_url) { "#{UsersServer.endpoint_url}/api/v1" }
@@ -32,21 +32,6 @@ context "when http errors happen" do
 
     it { expect(subject.parsed_body).to be_kind_of(Hash) }
     it { expect(subject.parsed_body).to eq(JSON.parse(expected_parsed_body.to_json)) }
-  end
-
-  describe ChimeraHttpClient::Error do
-    let(:failure_code) { 400 }
-    let(:class_name) { "Error" }
-
-    pending "when the failure body is not real JSON" do
-      let(:expected_parsed_body) { { "non_json_body" => "" } }
-      let(:failure_body) { "" }
-    end
-
-    context "when requests are logged" do
-      pending "to_s includes request"
-      pending "to_json includes request"
-    end
   end
 
   # TODO: make it conditional if a redirect should be handled as an error or not
@@ -161,5 +146,20 @@ context "when http errors happen" do
 
     it { expect(subject.parsed_body).to be_kind_of(Hash) }
     it { expect(subject.parsed_body).to eq({ "non_json_body" => "" }) }
+  end
+
+  describe ChimeraHttpClient::Error do
+    let(:failure_code) { 400 }
+    let(:class_name) { "Error" }
+
+    pending "when the failure body is not real JSON" do
+      let(:expected_parsed_body) { { "non_json_body" => "" } }
+      let(:failure_body) { "" }
+    end
+
+    context "when requests are logged" do
+      pending "to_s includes request"
+      pending "to_json includes request"
+    end
   end
 end
