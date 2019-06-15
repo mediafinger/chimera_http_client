@@ -17,9 +17,9 @@ _none known_
 
 ### Custom De-serializer
 
-* [ ] allow to pass custom deserializer
-* [ ] use custom deserializer in #parsed_body instead of default JSON parsing
-* [ ] add example to README
+* [x] ~~allow to pass custom deserializer~~
+* [x] ~~use custom deserializer in #parsed_body instead of default JSON parsing~~
+* [x] ~~add example to README~~
 
 ### Queueing / running in parallel
 

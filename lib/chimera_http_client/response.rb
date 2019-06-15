@@ -8,7 +8,7 @@ module ChimeraHttpClient
       @time     = response.total_time
       @response = response # contains the request
 
-      @deserializer = options[:response_deserializer]
+      @deserializer = options[:deserializer][:response]
     end
 
     def parsed_body

@@ -40,8 +40,7 @@ module ChimeraHttpClient
     def create_request(method:, url:, body:, headers:, options:)
       class_options = {
         logger: @logger,
-        error_deserializer: ::ChimeraHttpClient::Deserializer.json_error,
-        response_deserializer: ::ChimeraHttpClient::Deserializer.json_response,
+        deserializer: @deserializer,
       }
 
       Request.new(class_options).create(

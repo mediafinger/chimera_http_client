@@ -6,7 +6,7 @@ module ChimeraHttpClient
       fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if options[:base_url].nil?
 
       @base_url = options.fetch(:base_url)
-      @deserializer = options.fetch(:deserializer, {})
+      @deserializer = default_deserializer.merge(options.fetch(:deserializer, {}))
       @logger = options[:logger]
       @timeout = options[:timeout]
 
@@ -41,6 +41,10 @@ module ChimeraHttpClient
 
     def default_headers
       { "Content-Type" => "application/json" }
+    end
+
+    def default_deserializer
+      { error: ::ChimeraHttpClient::Deserializer.json_error, response: ::ChimeraHttpClient::Deserializer.json_response }
     end
 
     # Build URL out of @base_url and endpoint given as String or Array, while trimming redundant "/"

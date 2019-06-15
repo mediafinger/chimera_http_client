@@ -81,6 +81,19 @@ The optional parameters are:
 * `user_agent` - if you would like your calls to identify with a specific user agent
 * `verbose` - the default is `false`, set it to true while debugging issues
 * `cache` - an instance of your cache solution, can be overwritten in any request
+* `deserializers` - custom methods to deserialize the response body, below more details
+
+##### Custom deserializers
+
+In case the API you are connecting to does not return JSON, you can pass custom deserializers to `Connection.new` or `Queue.new`:
+
+    deserializers: { error: your_error_deserializer, response: your_response_deserializer }
+
+A Deserializer has to be an object on which the method `call` with the parameter `body` can be called:
+
+    custom_deserializer.call(body)
+
+where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
 
 ### Request methods
 
@@ -262,10 +275,6 @@ To create and fetch a user from a remote service with the `Users` wrapper listed
 Usually it does not have to be used directly. It is the class that executes the `Typhoeus::Requests`, raises `Errors` on failing and returns `Response` objects on successful calls.
 
 The `body` which it receives from the `Connection` class has to be in the in the (serialized) form in which the endpoint expects it. Usually this means you have to pass a JSON string to the `body` (it will **not** be serialized automatically).
-
-> Upcoming feature:
->
-> It will be expanded by a `.queue` method, that will queue (sic) calls and run them in parallel and not run every call directly, like the `.run` method does.
 
 ## The Response class
 

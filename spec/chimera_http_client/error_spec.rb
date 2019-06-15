@@ -1,7 +1,7 @@
 require "spec_helper"
 
 context "http errors" do
-  subject(:api_error) { described_class.new(typhoeus_response, error_deserializer: deserializer) }
+  subject(:api_error) { described_class.new(typhoeus_response, deserializer: deserializer) }
 
   let(:base_url) { "https://domain/path" }
   let(:method) { :patch }
@@ -9,7 +9,7 @@ context "http errors" do
     Typhoeus::Response.new(code: failure_code, body: failure_body, total_time: response_time)
                       .tap { |resp| resp.request = Typhoeus::Request.new(base_url, method: method) }
   end
-  let(:deserializer) { ::ChimeraHttpClient::Deserializer.json_error }
+  let(:deserializer) { { error: ::ChimeraHttpClient::Deserializer.json_error } }
   let(:expected_parsed_body) { { "errors" => [{ "code" => failure_code }] } }
   let(:failure_body) { expected_parsed_body.to_json }
   let(:response_time) { 0.5 }

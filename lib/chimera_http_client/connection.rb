@@ -13,8 +13,7 @@ module ChimeraHttpClient
     def request
       options = {
         logger: @logger,
-        error_deserializer: ::ChimeraHttpClient::Deserializer.json_error,
-        response_deserializer: ::ChimeraHttpClient::Deserializer.json_response,
+        deserializer: @deserializer,
       }
 
       @request ||= Request.new(options)

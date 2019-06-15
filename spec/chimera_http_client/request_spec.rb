@@ -25,10 +25,11 @@ describe ChimeraHttpClient::Request do
   end
 
   describe "#run" do
-    subject(:request) { described_class.new.run(url: url, method: :get) }
+    subject(:request) { described_class.new(deserializer: deserializer).run(url: url, method: :get) }
 
     let(:url) { "http://127.0.0.1/dummy" }
     let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
+    let(:deserializer) { { error: ::ChimeraHttpClient::Deserializer.json_error } }
     let(:response_body) { { "id" => 42, "name" => "Andy" } }
     let(:response_json) { response_body.to_json }
     let(:response_time) { 0.5 }
@@ -110,7 +111,7 @@ describe ChimeraHttpClient::Request do
     end
 
     context "when no logger is provided" do
-      subject(:request) { described_class.new.run(url: url, method: :get) }
+      subject(:request) { described_class.new(deserializer: deserializer).run(url: url, method: :get) }
       let(:response_code) { 200 }
 
       it_behaves_like "a Request"
