@@ -39,7 +39,16 @@ _none known_
 ### Miscellaneous
 
 - [ ] Determine by parameter if 3xx Redirects should be handled as an Error or not
-- [ ] Add a longer description to the gemspec file
+- [x] ~~Add a longer description to the gemspec file~~
+
+### Instrumentation
+
+- [ ] allow to pass object to collect metrics for monitoring
+  - [ ] request URL
+  - [ ] request resonse code
+  - [ ] request datetime
+  - [ ] request runtime
+- [ ] add example to README
 
 ### Enable more Typhoeus functionality
 

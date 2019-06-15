@@ -7,6 +7,7 @@ And what works for the internal communication between your own apps, will also w
 It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance and simple aggregating of distributed data.
 
 [![Build Status](https://travis-ci.com/mediafinger/chimera_http_client.svg?branch=master)](https://travis-ci.com/mediafinger/chimera_http_client)
+[![Gem Version](https://badge.fury.io/rb/chimera_http_client.svg)](https://badge.fury.io/rb/chimera_http_client)
 
 ## Dependencies
 
@@ -387,7 +388,10 @@ When updating the version, do not forget to run
 
 After checking out the repo, run `bundle install` and then `bundle execute rake` to run the **tests and rubocop**.
 
-> The test suite uses a Sinatra server to make real HTTP requests. It is mounted via Capybara_discoball and running in the same process.
+> The test suite uses a Sinatra server to make real HTTP requests. It is mounted via Capybara_discoball and running in the same process. It is still running reasonably fast (on my MacBook Air):
+
+    Finished in 2.01 seconds (files took 1.09 seconds to load)
+    824 examples, 0 failures, 7 pending
 
 You can also run `rake console` to open an irb session with the `ChimeraHttpClient` pre-loaded that will allow you to experiment.
 
