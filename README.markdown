@@ -14,7 +14,13 @@ The `chimera_http_client` gem is wrapping the **libcurl** wrapper [**Typhoeus**]
 
 The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](https://github.com/fxn/zeitwerk) which is also part of Rails 6.
 
-All Ruby versions equal to or newer than **2.4** are supported.
+### Ruby version
+
+| Chimera version | Ruby version |
+|:----------------|:-------------|
+| >= 1.1          | >= 2.5       |
+| =  1.0          | >= 2.4       |
+| <= 0.5          | >= 2.1       |
 
 ### ENV variables
 
@@ -285,9 +291,9 @@ The `ChimeraHttpClient::Response` objects have the following interface:
     * time             (for monitoring)
     * response         (the full response object, including the request)
     * error?           (returns false)
-    * parsed_body      (returns the result of JSON.parse(body))
+    * parsed_body      (returns the result of `deserializer[:response].call(body)`)
 
-If your API does not use JSON, but a different format e.g. XML, you can either monkey patch a `parsed_xml` method to the Response class, or let your wrapper handle the parsing of `body`.
+If your API does not use JSON, but a different format e.g. XML, you can pass a custom deserializer to the Connection.
 
 ## Error classes
 
@@ -367,7 +373,7 @@ To inspect the requests waiting for execution, call `queue.queued_requests`.
 
 Add this line to your application's Gemfile:
 
-    gem 'chimera_http_client', '~> 0.5'
+    gem 'chimera_http_client', '~> 1.1'
 
 And then execute:
 
