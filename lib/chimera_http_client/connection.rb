@@ -12,8 +12,9 @@ module ChimeraHttpClient
 
     def request
       options = {
-        logger: @logger,
         deserializer: @deserializer,
+        logger: @logger,
+        monitor: @monitor,
       }
 
       @request ||= Request.new(options)

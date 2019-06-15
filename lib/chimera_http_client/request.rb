@@ -5,7 +5,6 @@ module ChimeraHttpClient
     attr_reader :request, :result
 
     def initialize(options = {})
-      @logger = options[:logger]
       @options = options
     end
 
@@ -37,13 +36,21 @@ module ChimeraHttpClient
 
       @result = nil
       @request.on_complete do |response|
-        @logger&.info("Completed HTTP request: #{method.upcase} #{url} " \
-          "in #{response.total_time&.round(3)}sec with status code #{response.code}")
+        runtime = response.total_time&.round(3)
+
+        @options[:monitor]&.call(
+          {
+            url: url, method: method, status: response.code, runtime: runtime,
+            completed_at: Time.now.utc.iso8601(3), context: options[:monitoring_context]
+          }
+        )
+        @options[:logger]&.info("Completed HTTP request: #{method.upcase} #{url} " \
+          "in #{runtime}sec with status code #{response.code}")
 
         @result = on_complete_handler(response)
       end
 
-      @logger&.info("Starting HTTP request: #{method.upcase} #{url}")
+      @options[:logger]&.info("Starting HTTP request: #{method.upcase} #{url}")
 
       self
     end

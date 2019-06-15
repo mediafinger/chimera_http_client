@@ -38,12 +38,13 @@ module ChimeraHttpClient
     private
 
     def create_request(method:, url:, body:, headers:, options:)
-      class_options = {
-        logger: @logger,
+      instance_options = {
         deserializer: @deserializer,
+        logger: @logger,
+        monitor: @monitor,
       }
 
-      Request.new(class_options).create(
+      Request.new(instance_options).create(
         method: method,
         url: url,
         body: body,

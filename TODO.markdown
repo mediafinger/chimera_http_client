@@ -14,8 +14,9 @@ _none known_
 * [x] ~~include the total_time of the requests in the log~~
 * [x] ~~add (example) to README~~
 * [ ] add logger.warn / .error for error cases (?)
+* [ ] streamline log message
 
-### Custom De-serializer
+### ~~Custom De-serializer~~
 
 * [x] ~~allow to pass custom deserializer~~
 * [x] ~~use custom deserializer in #parsed_body instead of default JSON parsing~~
@@ -40,15 +41,18 @@ _none known_
 
 - [ ] Determine by parameter if 3xx Redirects should be handled as an Error or not
 - [x] ~~Add a longer description to the gemspec file~~
+- [ ] Refactor README to explain simple use case vs. all the powerful options?
 
-### Instrumentation
+### ~~Instrumentation~~
 
-- [ ] allow to pass object to collect metrics for monitoring
-  - [ ] request URL
-  - [ ] request resonse code
-  - [ ] request datetime
-  - [ ] request runtime
-- [ ] add example to README
+- [x] ~~allow to pass object to collect metrics for monitoring~~
+  - [x] ~~request URL~~
+  - [x] ~~request HTTP method~~
+  - [x] ~~request response code~~
+  - [x] ~~request datetime~~
+  - [x] ~~request runtime~~
+  - [x] ~~custom context information per request~~
+- [x] ~~add example to README~~
 
 ### Enable more Typhoeus functionality
 
@@ -93,7 +97,7 @@ _none known_
 * [x] ~~allow to set custom timeout per call~~
 * [x] ~~add (example) to README~~
 
-### Release
+### ~~Release~~
 
 * [x] ~~rename module to have unique namespace~~
 * [x] ~~release to rubygems to add to the plethora of similar gems~~

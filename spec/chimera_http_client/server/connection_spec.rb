@@ -83,16 +83,6 @@ describe ChimeraHttpClient::Connection do
     it { expect(connection.request).to be_kind_of ChimeraHttpClient::Request }
   end
 
-  # TODO: test with cache, deserializer, ...?
-  # OPTIONS
-  describe "option timeout" do
-    subject(:custom_timeout) { connection.get(endpoint, timeout: 12) }
-
-    it "overrides the default timeout" do
-      expect(custom_timeout.response.request.original_options).to include(timeout: 12)
-    end
-  end
-
   # GET
   describe "#get" do
     subject(:get) { connection.get(endpoint) }

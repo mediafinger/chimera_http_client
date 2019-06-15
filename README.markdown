@@ -83,12 +83,13 @@ Setting the `base_url` is meant to be a comfort feature, as you can then pass sh
 
 The optional parameters are:
 
+* `cache` - an instance of your cache solution, can be overwritten in any request
+* `deserializers` - custom methods to deserialize the response body, below more details
 * `logger` - an instance of a logger class that implements `#info` and `#warn` methods
+* `monitor` - to collect metrics about requests, the basis for your instrumentation needs
 * `timeout` - the timeout for all requests, can be overwritten in any request, the default are 3 seconds
 * `user_agent` - if you would like your calls to identify with a specific user agent
 * `verbose` - the default is `false`, set it to true while debugging issues
-* `cache` - an instance of your cache solution, can be overwritten in any request
-* `deserializers` - custom methods to deserialize the response body, below more details
 
 ##### Custom deserializers
 
@@ -101,6 +102,23 @@ A Deserializer has to be an object on which the method `call` with the parameter
     custom_deserializer.call(body)
 
 where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
+
+##### Monitoring, metrics, instrumentation
+
+Pass an object as `:monitor` to a connection that defines the method `call` and accepts a hash as parameter.
+
+    monitor.call({...})
+
+It will receive information about every request as soon as it finished. What you do with this information is up for you to implement.
+
+| Field          | Description                                                           |
+|:---------------|:----------------------------------------------------------------------|
+| `url`          | URL of the endpoint that was called                                   |
+| `method`       | HTTP method: get, post, ...                                           |
+| `status`       | HTTP status code: 200, ...                                            |
+| `runtime`      | the time in seconds it took the request to finish                     |
+| `completed_at` | Time.now.utc.iso8601(3)                                               |
+| `context`      | Whatever you pass as `monitoring_context` to the options of a request |
 
 ### Request methods
 
@@ -142,6 +160,7 @@ All request methods expect a mandatory `endpoint` and an optional hash as parame
 * `password` - used for a BasicAuth login
 * `timeout` - set a custom timeout per request (the default is 3 seconds)
 * `cache` - optionally overwrite the cache store set in `Connection` in any request
+* `monitoring_context` - pass additional information you want to collect with your instrumentation `monitor`
 
 Example:
 

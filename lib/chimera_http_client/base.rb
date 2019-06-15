@@ -8,6 +8,7 @@ module ChimeraHttpClient
       @base_url = options.fetch(:base_url)
       @deserializer = default_deserializer.merge(options.fetch(:deserializer, {}))
       @logger = options[:logger]
+      @monitor = options[:monitor]
       @timeout = options[:timeout]
 
       Typhoeus::Config.cache = options[:cache]
