@@ -3,7 +3,10 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 
 Bundler::Audit::Task.new
-RSpec::Core::RakeTask.new(:rspec)
+
+RSpec::Core::RakeTask.new(:rspec) do |t|
+  # t.exclude_pattern = "**/server/*_spec.rb" # skip real http server specs
+end
 
 desc "Open a console with the ChimeraHttpClient loaded"
 task :console do
