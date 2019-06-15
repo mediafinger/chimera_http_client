@@ -24,7 +24,11 @@ class UsersServer < Sinatra::Base
       end
 
       status params[:code].to_i
-      return { message: "error #{params[:code]}" }.to_json
+      if params[:code].to_i >= 300
+        return { message: "error #{params[:code]}" }.to_json
+      else
+        return { message: "LGTM #{params[:code]}" }.to_json
+      end
     end
 
     post "/users" do
