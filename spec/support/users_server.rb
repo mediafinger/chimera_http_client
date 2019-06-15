@@ -14,12 +14,25 @@ class UsersServer < Sinatra::Base
       content_type "application/json"
     end
 
+    # timeout in the test is set to 0.2 seconds, so we don't have to wait 5s
+    get "/errors/:code" do
+      sleep 5 if params[:code] == "timeout"
+
+      if params[:code].to_i == 0
+        status 0
+        return
+      end
+
+      status params[:code].to_i
+      return { message: "error #{params[:code]}" }.to_json
+    end
+
     get "/users" do
       content_type :json
 
       if params[:unauthorized]
         status 403
-        { message: "Your favorite fake error message" }.to_json
+        return { message: "Your favorite fake error message" }.to_json
       else
         offset, limit = *pagination
 
@@ -35,7 +48,7 @@ class UsersServer < Sinatra::Base
 
       if params[:fake_error]
         status 422
-        { message: "Your favorite fake error message" }.to_json
+        return { message: "Your favorite fake error message" }.to_json
       else
         id = params["id"]
         user = RESPONSE_BODY[:entries].detect { |u| u[:id] == id }
