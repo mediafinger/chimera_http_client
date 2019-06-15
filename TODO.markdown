@@ -52,13 +52,6 @@ _none known_
 * [ ] or enable to access the Typhoeos directly through Chimera?
 * [ ] add example to README
 
-### Custom Serializer
-
-* [ ] allow to pass custom serializer
-* [ ] use custom serializer instead of expecting a JSON (or other) body
-* [ ] set header for the serializer
-* [ ] add example to README
-
 ### File Uploads
 
 * [ ] add example to README
