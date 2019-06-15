@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["webmaster@mediafinger.com"]
 
   spec.summary       = "Http Client to connect to REST APIs"
-  spec.description   = "General http client functionality to easily connect to JSON endpoints"
+  spec.description   = "General http client functionality to easily connect to JSON endpoints" # TODO: extend and polish
   spec.homepage      = "https://github.com/mediafinger/chimera_http_client"
   spec.license       = "MIT"
 
