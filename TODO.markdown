@@ -31,10 +31,15 @@ _none known_
 
 ### Add server for testing
 
-* [ ] add a simple (Sinatra) server for testing
-* [ ] run (all?) tests against the server (with capybara_discoball?)
+* [x] ~~add a simple (Sinatra) server for testing~~
+* [x] ~~run (all?) tests against the server (with capybara_discoball)~~
 * [ ] make server also available for console testing
 * [ ] add example to README
+
+### Miscellaneous
+
+- [ ] Determine by parameter if 3xx Redirects should be handled as an Error or not
+- [ ] Add a longer description to the gemspec file
 
 ### Enable more Typhoeus functionality
 

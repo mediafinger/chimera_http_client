@@ -61,7 +61,7 @@ module ChimeraHttpClient
 
       case response.code.to_i
       when 301, 302, 303, 307
-        RedirectionError.new(response, @options)
+        RedirectionError.new(response, @options) # TODO: throw error conditionally
       when 200..399
         nil
       when 400

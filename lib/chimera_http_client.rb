@@ -5,4 +5,7 @@ module ChimeraHttpClient
 
   loader = Zeitwerk::Loader.for_gem
   loader.setup
+
+  # as Zeitwerk can't handle innner classes properly :-/
+  require_relative "./chimera_http_client/error.rb"
 end

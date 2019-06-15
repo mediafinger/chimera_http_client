@@ -387,6 +387,8 @@ When updating the version, do not forget to run
 
 After checking out the repo, run `bundle install` and then `bundle execute rake` to run the **tests and rubocop**.
 
+> The test suite uses a Sinatra server to make real HTTP requests. It is mounted via Capybara_discoball and running in the same process.
+
 You can also run `rake console` to open an irb session with the `ChimeraHttpClient` pre-loaded that will allow you to experiment.
 
 To build and install this gem onto your local machine, run `bundle exec rake install`.
