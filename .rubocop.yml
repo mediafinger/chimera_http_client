@@ -19,6 +19,7 @@ Metrics/AbcSize:
 
 Metrics/BlockLength:
   Exclude:
+    - chimera_http_client.gemspec
     - spec/**/*
 
 # Configuration parameters: CountComments.
