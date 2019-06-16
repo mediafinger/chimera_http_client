@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
     It is lightweight, fast and enables you to queue HTTP requests to run them in parallel
     for better performance and simple aggregating of distributed data. Despite it's simple
     interface it allows for advanced features like using custom deserializers, loggers,
-    caching requests individiually, and instrumentation support (soon to be implemented).
+    caching requests individiually, and custom instrumentation support.
   DESCRIPTION
 
   spec.homepage      = "https://github.com/mediafinger/chimera_http_client"

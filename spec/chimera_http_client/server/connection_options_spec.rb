@@ -7,7 +7,8 @@ describe ChimeraHttpClient::Connection do
 
   let(:frozen_time) { Time.now.utc.iso8601(3) }
 
-  # TODO: test with cache, deserializer, logger, monitor, timeout, ...?
+  # TODO: test with cache, deserializer, logger, monitor, timeout, ...
+  # basic auth https://gist.github.com/nakajima/16483?
 
   # TIMEOUT
   describe "option timeout" do

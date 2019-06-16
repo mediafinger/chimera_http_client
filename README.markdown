@@ -66,18 +66,28 @@ The basic usage looks like this:
 
 ```ruby
 connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost/namespace')
+
 response = connection.get!(endpoint, params: params)
 ```
 
 ### Initialization
 
-`connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', logger: logger, cache: cache)`
+```ruby
+connection = ChimeraHttpClient::Connection.new(
+  base_url: 'http://localhost:3000/v1',
+  cache: cache,
+  deserializer: { deserializer: { error: HtmlParser, response: XMLParser }},
+  logger: logger,
+  monitor: monitor,
+  timeout:  2
+)
+```
 
 #### Mandatory initialization parameter `base_url`
 
 The mandatory parameter is **base_url** which should include the host, port and base path to the API endpoints you want to call, e.g. `'http://localhost:3000/v1'`.
 
-Setting the `base_url` is meant to be a comfort feature, as you can then pass short endpoints to each request like `/users`. You could set an empty string `''` as `base_url` and then pass full qualified URLs as endpoint of the requests.
+Setting the `base_url` is meant to be a comfort feature, as you can then pass short endpoints to each request like `users` (yes, feel free to omit leading or trailing slashes). You could set an empty string `''` as `base_url` and then pass full qualified URLs as endpoint of the requests.
 
 #### Optional initialization parameters
 
@@ -91,34 +101,7 @@ The optional parameters are:
 * `user_agent` - if you would like your calls to identify with a specific user agent
 * `verbose` - the default is `false`, set it to true while debugging issues
 
-##### Custom deserializers
-
-In case the API you are connecting to does not return JSON, you can pass custom deserializers to `Connection.new` or `Queue.new`:
-
-    deserializers: { error: your_error_deserializer, response: your_response_deserializer }
-
-A Deserializer has to be an object on which the method `call` with the parameter `body` can be called:
-
-    custom_deserializer.call(body)
-
-where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
-
-##### Monitoring, metrics, instrumentation
-
-Pass an object as `:monitor` to a connection that defines the method `call` and accepts a hash as parameter.
-
-    monitor.call({...})
-
-It will receive information about every request as soon as it finished. What you do with this information is up for you to implement.
-
-| Field          | Description                                                           |
-|:---------------|:----------------------------------------------------------------------|
-| `url`          | URL of the endpoint that was called                                   |
-| `method`       | HTTP method: get, post, ...                                           |
-| `status`       | HTTP status code: 200, ...                                            |
-| `runtime`      | the time in seconds it took the request to finish                     |
-| `completed_at` | Time.now.utc.iso8601(3)                                               |
-| `context`      | Whatever you pass as `monitoring_context` to the options of a request |
+> Detailed information about every parameter can be found below.
 
 ### Request methods
 
@@ -126,9 +109,12 @@ The available methods are:
 
 * `get` / `get!`
 * `post` / `post!`
-* `put` / `put`
+* `put` / `put!`
 * `patch` / `patch!`
 * `delete` / `delete!`
+* `head` / `head!`
+* `options` / `options!`
+* `trace` / `trace!`
 
 where the methods ending on a _bang!_ will raise an error (which you should handle in your application) while the others will return an error object.
 
@@ -143,7 +129,7 @@ connection.get("users/#{id}")
 connection.get("/users/#{id}")
 ```
 
-All forms above ave valid and will make a request to the same URL.
+All forms above are valid and will make a request to the same URL.
 
 * Please take note that _the endpoint can be given as a String, a Symbol, or an Array._  
 * While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._  
@@ -162,7 +148,9 @@ All request methods expect a mandatory `endpoint` and an optional hash as parame
 * `cache` - optionally overwrite the cache store set in `Connection` in any request
 * `monitoring_context` - pass additional information you want to collect with your instrumentation `monitor`
 
-Example:
+> Detailed information about every parameter can be found below.
+
+### Example usage
 
 ```ruby
 connection.post(
@@ -170,59 +158,9 @@ connection.post(
   body: { name: "Andy" },
   params: { origin: `Twitter`},
   headers: { "Authorization" => "Bearer #{token}" },
-  timeout: 10,
-  cache: nil
+  timeout: 5
 )
 ```
-
-#### Basic auth
-
-In case you need to use an API that is protected by **basic_auth** just pass the credentials as optional parameters:  
-`username: 'admin', password: 'secret'`
-
-#### Timeout duration
-
-The default timeout duration is **3 seconds**.
-
-If you want to use a different timeout, you can pass the key `timeout` when initializing the `Connection`. You can also overwrite it on every call.
-
-#### Custom logger
-
-By default no logging is happening. If you need request logging, you can pass your custom Logger to the key `logger` when initializing the `Connection`. It will write to `logger.info` when starting and when completing a request.
-
-#### Caching responses
-
-To cache all the reponses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
-
-It could be an instance of an implementation as simple as this:
-
-```ruby
-class Cache
-  def initialize
-    @memory = {}
-  end
-
-  def get(request)
-    @memory[request]
-  end
-
-  def set(request, response)
-    @memory[request] = response
-  end
-end
-```
-
-Or use an adapter for Dalli, Redis, or Rails cache that also support an optional time-to-live `default_ttl` parameter. If you use `Rails.cache` with the adapter `:memory_store` or `:mem_cache_store`, the object you would have to pass looks like this:
-
-```ruby
-require "typhoeus/cache/rails"
-
-cache: Typhoeus::Cache::Rails.new(Rails.cache, default_ttl: 600) # 600 seconds
-```
-
-Read more about how to use it: https://github.com/typhoeus/typhoeus#caching
-
-### Example usage
 
 To use the gem, it is recommended to write wrapper classes for the endpoints used. While it would be possible to use the `get, get!, post, post!, put, put!, patch, patch!, delete, delete!` or also the bare `request.run` methods directly, wrapper classes will unify the usage pattern and be very convenient to use by veterans and newcomers to the team. A wrapper class could look like this:
 
@@ -296,6 +234,113 @@ To create and fetch a user from a remote service with the `Users` wrapper listed
   user.name # == "Andy"
 ```
 
+### Connection parameter details
+
+#### base_url
+
+#### Cache
+
+To cache the reponses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
+
+It could be an instance of an implementation as simple as this:
+
+```ruby
+class Cache
+  def initialize
+    @memory = {}
+  end
+
+  def get(request)
+    @memory[request]
+  end
+
+  def set(request, response)
+    @memory[request] = response
+  end
+end
+```
+
+Or use an adapter for Dalli, Redis, or Rails cache that also support an optional time-to-live `default_ttl` parameter. If you use `Rails.cache` with the adapter `:memory_store` or `:mem_cache_store`, the object you would have to pass looks like this:
+
+```ruby
+require "typhoeus/cache/rails"
+
+cache: Typhoeus::Cache::Rails.new(Rails.cache, default_ttl: 600) # 600 seconds
+```
+
+Read more about how to use it: https://github.com/typhoeus/typhoeus#caching
+
+#### Custom deserializers
+
+In case the API you are connecting to does not return JSON, you can pass custom deserializers to `Connection.new` or `Queue.new`:
+
+    deserializers: { error: your_error_deserializer, response: your_response_deserializer }
+
+A Deserializer has to be an object on which the method `call` with the parameter `body` can be called:
+
+    custom_deserializer.call(body)
+
+where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
+
+#### Logger
+
+By default no logging is happening. If you need request logging, you can pass your custom Logger as option `:logger` when initializing the `Connection`. Chimera will write to `logger.info` when starting and when completing a request.
+
+#### Monitoring, metrics, instrumentation
+
+Pass an object as `:monitor` to a connection that defines the method `call` and accepts a hash as parameter.
+
+    monitor.call({...})
+
+It will receive information about every request as soon as it finished. What you do with this information is up for you to implement.
+
+| Field          | Description                                                           |
+|:---------------|:----------------------------------------------------------------------|
+| `url`          | URL of the endpoint that was called                                   |
+| `method`       | HTTP method: get, post, ...                                           |
+| `status`       | HTTP status code: 200, ...                                            |
+| `runtime`      | the time in seconds it took the request to finish                     |
+| `completed_at` | Time.now.utc.iso8601(3)                                               |
+| `context`      | Whatever you pass as `monitoring_context` to the options of a request |
+
+#### Timeout
+
+The default timeout duration is **3 seconds**.
+
+If you want to use a different timeout, you can pass the option `timeout` when initializing the `Connection`. Give the timeout in seconds (it can be below 1 second, just pass `0.5`). You can also overwrite the time out on every call.
+
+#### User Agent
+
+#### verbose
+
+### Request parameter details
+
+#### endpoint
+
+#### Body
+
+#### Headers
+
+#### Params
+
+#### Basic auth / `username:password`
+
+In case you need to use an API that is protected by **basic_auth** just pass the credentials as optional parameters:  
+`username: 'admin', password: 'secret'`
+
+#### Timeout duration
+
+The default timeout duration is **3 seconds**. You can pass the option `:timeout` to overwrite the Connection default or its custom setting it on every call.
+
+#### Caching responses
+
+You inject a caching adapter on a per request basis, this is also possible when an adapter has been set for the Connection already. Please keep in mind that not all HTTP calls support caching.
+<!-- # TODO: list examples -->
+
+#### monitoring_context
+
+<!-- # TODO: list examples -->
+
 ## The Request class
 
 Usually it does not have to be used directly. It is the class that executes the `Typhoeus::Requests`, raises `Errors` on failing and returns `Response` objects on successful calls.
@@ -308,25 +353,27 @@ The `ChimeraHttpClient::Response` objects have the following interface:
 
     * body             (content the call returns)
     * code             (http code, should be 200 or 2xx)
-    * time             (for monitoring)
-    * response         (the full response object, including the request)
     * error?           (returns false)
-    * parsed_body      (returns the result of `deserializer[:response].call(body)`)
+    * parsed_body      (returns the result of `deserializer[:response].call(body)` by default it deserializes JSON)
+    * response         (the full response object, including the request)
+    * time             (for monitoring)
 
-If your API does not use JSON, but a different format e.g. XML, you can pass a custom deserializer to the Connection.
+If your API does not use JSON, but a different format e.g. XML, you can pass a custom deserializer to the Connection. If you don't want that Chimera deserialized the response body, pass a Proc that does nothing:
+
+    deserializer: { response: proc { |body| body }, response: proc { |body| body } }
 
 ## Error classes
 
 All errors inherit from `ChimeraHttpClient::Error` and therefore offer the same attributes:
 
-    * code             (http error code)
     * body             (alias => message)
-    * time             (for monitoring)
-    * response         (the full response object, including the request)
+    * code             (http error code)
     * error?           (returns true)
     * error_class      (e.g. ChimeraHttpClient::NotFoundError)
-    * to_s             (information for logging / respects ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS'])
+    * response         (the full response object, including the request)
+    * time             (runtime of the request for monitoring)
     * to_json          (information to return to the API consumer / respects ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS'])
+    * to_s             (information for logging / respects ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS'])
 
 The error classes and their corresponding http error codes:
 
@@ -370,6 +417,9 @@ The only difference is that a parameter to set the HTTP method has to prepended.
 * `:put` / `'put'` / `'PUT'`
 * `:patch` / `'patch'` / `'PATCH'`
 * `:delete` / `'delete'` / `'DELETE'`
+* `:head` / `'head'` / `'HEAD'`
+* `:options` / `'options'` / `'OPTIONS'`
+* `:trace` / `'trace'` / `'TRACE'`
 
 ### Executing requests in parallel
 
