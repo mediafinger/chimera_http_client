@@ -153,7 +153,7 @@ All request methods expect a mandatory `endpoint` and an optional hash as parame
 ### Example usage
 
 ```ruby
-connection.post(
+response = connection.post(
   :users,
   body: { name: "Andy" },
   params: { origin: `Twitter`},
@@ -240,7 +240,7 @@ To create and fetch a user from a remote service with the `Users` wrapper listed
 
 #### Cache
 
-To cache the reponses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
+To cache the responses of a connection, just pass the optional parameter `cache` to its initializer. You can also overwrite the connection's cache configuration by passing the parameter `cache` to any `get` call.
 
 It could be an instance of an implementation as simple as this:
 
@@ -281,6 +281,10 @@ A Deserializer has to be an object on which the method `call` with the parameter
     custom_deserializer.call(body)
 
 where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
+
+If you don't want that Chimera deserialize the response body, pass a Proc that does nothing:
+
+    deserializer: { response: proc { |body| body }, response: proc { |body| body } }
 
 #### Logger
 
@@ -358,9 +362,7 @@ The `ChimeraHttpClient::Response` objects have the following interface:
     * response         (the full response object, including the request)
     * time             (for monitoring)
 
-If your API does not use JSON, but a different format e.g. XML, you can pass a custom deserializer to the Connection. If you don't want that Chimera deserialized the response body, pass a Proc that does nothing:
-
-    deserializer: { response: proc { |body| body }, response: proc { |body| body } }
+If your API does not use JSON, but a different format e.g. XML, you can pass a custom deserializer to the Connection.
 
 ## Error classes
 
@@ -392,7 +394,10 @@ The error classes and their corresponding http error codes:
 
 ## The Queue class
 
-Instead of making single requests immediately, the ChimeraHttpClient allows to queue requests and run them in **parallel**.
+Instead of making single requests immediately, the ChimeraHttpClient allows to queue requests and run them in **parallel**. The two big benefits are:
+
+* only one HTTP connection has to be created (and closed) for all the requests (if the server supports this)
+* no need for more asynchronicity in your code, just use the aggregated result set
 
 The number of parallel requests is limited by your system. There is a hard limit for 200 concurrent requests. You will have to measure yourself where the sweet spot for optimal performance is - and when things start to get flaky. I recommend to queue not much more than 20 requests before running them.
 
@@ -420,6 +425,39 @@ The only difference is that a parameter to set the HTTP method has to prepended.
 * `:head` / `'head'` / `'HEAD'`
 * `:options` / `'options'` / `'OPTIONS'`
 * `:trace` / `'trace'` / `'TRACE'`
+
+#### Request chaining
+
+In version _1.2.1.beta_ `queue.add` accepts the parameter `success_handler` which takes a proc or lambda that accepts the **two parameters** `queue` and `response`. It will be executed once the given request returns a successful response. In it another request can be queued, which can use parts of the response of the previous successful request.
+
+You could for example first queue a user object to receive some related _id_ and then use this _id_ to fetch this object.
+
+```ruby
+success_handler =
+  proc do |queue, response|
+    neighbour_id = response.parsed_body[:neighbour_id]
+
+    queue.add(:get, "users/#{neighbour_id}")
+
+    response
+  end
+```
+
+It is important to let your success_handler _always_ return the `response` of the original request (unless you are not interested in the response).
+
+Calls defined in a success_handler will be run after all previously queued requests.
+
+```ruby
+queue.add(method, endpoint, success_handler: success_handler) # first
+queue.add(method, other_endpoint) # second
+
+responses = queue.execute
+
+responses[0] # first
+responses[1] # second
+responses[2] # third, the call given in the success_handler
+```
+
 
 ### Executing requests in parallel
 

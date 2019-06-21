@@ -58,7 +58,11 @@ module ChimeraHttpClient
     private
 
     def on_complete_handler(response)
-      return Response.new(response, @options) if response.success?
+      if response.success?
+        return Response.new(response, @options) unless @options[:success_handler]
+
+        return @options[:success_handler].call(@options[:queue], Response.new(response, @options))
+      end
 
       exception_for(response)
     end

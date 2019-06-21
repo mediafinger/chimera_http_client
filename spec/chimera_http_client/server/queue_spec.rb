@@ -38,6 +38,33 @@ describe ChimeraHttpClient::Queue do
       expect(responses.last.code).to eq(404)
       expect(responses.last.parsed_body).to eq({ "message" => "User with id = 404 not found" })
     end
+
+    context "what a success_handler is given" do
+      let(:queue) { described_class.new(base_url: base_url, logger: Logger.new(STDOUT)) }
+
+      let(:first_endpoint) { "users/333" } # "Sansa Stark"
+      let(:second_endpoint) { "users/4444" } # "The Red Woman"
+      let(:success_handler) do
+        proc do |queue, response|
+          queue.add(:get, "users/1") if response.parsed_body["name"] == "Sansa Stark" # a third request
+          response
+        end
+      end
+
+      it "uses a given success_handler" do
+        queue.add(method, first_endpoint, success_handler: success_handler) # "Sansa Stark"
+        queue.add(method, second_endpoint) # "The Red Woman"
+
+        responses = queue.execute
+
+        expect(responses).to be_a(Array)
+        expect(responses.count).to eq(3)
+
+        expect(responses[0].parsed_body["name"]).to eq("Sansa Stark")
+        expect(responses[1].parsed_body["name"]).to eq("The Red Woman")
+        expect(responses[2].parsed_body["name"]).to eq("Arya Stark")
+      end
+    end
   end
 
   describe "#empty" do

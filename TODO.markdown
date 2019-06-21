@@ -15,6 +15,7 @@ _none known_
 * [x] ~~add (example) to README~~
 * [ ] add logger.warn / .error for error cases (?)
 * [ ] streamline log message
+* [ ] refactor to `monitor` concept, pass in proc, not a logger object
 
 ### ~~Custom De-serializer~~
 
@@ -26,8 +27,9 @@ _none known_
 
 * [x] ~~allow to queue multiple requests~~
 * [x] ~~execute (up to 200) requests in parallel~~
+* [x] allow to pass one proc / block to request to use as on_complete handler
+* [ ] ensure to check timeouts and connection errors are not re-run (conditionally?)
 * [ ] allow to pass one proc / block (for all requests) to use as on_complete handler for each request
-* [ ] allow to pass one proc / block per requests) to use as on_complete handler
 * [ ] add example to README
 
 ### Add server for testing

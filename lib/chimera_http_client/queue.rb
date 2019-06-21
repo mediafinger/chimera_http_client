@@ -20,7 +20,20 @@ module ChimeraHttpClient
 
       hydra.run
 
-      responses = queued_requests.map { |request| request.result }
+      responses = queued_requests.map do |request|
+        if request.result.nil?
+          options = request.send(:instance_variable_get, "@options")
+          response = request.request.run
+
+          if response.success?
+            ::ChimeraHttpClient::Response.new(response, options)
+          else
+            ::ChimeraHttpClient::Error.new(response, options)
+          end
+        else
+          request.result
+        end
+      end
 
       empty
 
@@ -42,6 +55,8 @@ module ChimeraHttpClient
         deserializer: @deserializer,
         logger: @logger,
         monitor: @monitor,
+        success_handler: options[:success_handler],
+        queue: self,
       }
 
       Request.new(instance_options).create(
