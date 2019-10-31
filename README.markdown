@@ -85,7 +85,7 @@ The optional parameters are:
 
 * `cache` - an instance of your cache solution, can be overwritten in any request
 * `deserializers` - custom methods to deserialize the response body, below more details
-* `logger` - an instance of a logger class that implements `#info` and `#warn` methods
+* `logger` - an instance of a logger class that implements `#info`, `#warn` and `#error` methods
 * `monitor` - to collect metrics about requests, the basis for your instrumentation needs
 * `timeout` - the timeout for all requests, can be overwritten in any request, the default are 3 seconds
 * `user_agent` - if you would like your calls to identify with a specific user agent
@@ -189,6 +189,17 @@ If you want to use a different timeout, you can pass the key `timeout` when init
 #### Custom logger
 
 By default no logging is happening. If you need request logging, you can pass your custom Logger to the key `logger` when initializing the `Connection`. It will write to `logger.info` when starting and when completing a request.
+
+The message passed to the logger is a hash with the following fields:
+
+| Key          | Description                                 |
+|:-------------|:--------------------------------------------|
+| `message`    | indicator if a call was started or finished |
+| `method`     | the HTTP method used                        |
+| `url`        | the requested URL                           |
+| `code`       | HTTP status code                            |
+| `runtime`    | time the request took in ms                 |
+| `user_agent` | the user_agent used to open the connection  |
 
 #### Caching responses
 
