@@ -23,6 +23,8 @@ The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](ht
 | =  1.0          | >= 2.4       |
 | <= 0.5          | >= 2.1       |
 
+The test suite of v1.3 and newer also passes on **JRuby** and on **TruffleRuby**.
+
 ### ENV variables
 
 Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `true` (or `'true'`) will provide more detailed error messages for logging and also add additional information to the Error JSON. It is recommended to use this only in development environments.
