@@ -16,6 +16,7 @@ module ChimeraHttpClient
       @result
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
@@ -44,16 +45,35 @@ module ChimeraHttpClient
             completed_at: Time.now.utc.iso8601(3), context: options[:monitoring_context]
           }
         )
-        @options[:logger]&.info("Completed HTTP request: #{method.upcase} #{url} " \
-          "in #{runtime}sec with status code #{response.code}")
+
+        @options[:logger]&.info(
+          {
+            message: "Completed Chimera HTTP Request",
+            method: method.upcase,
+            url: url,
+            code: response.code,
+            runtime: runtime,
+            user_agent: Typhoeus::Config.user_agent,
+          }
+        )
 
         @result = on_complete_handler(response)
       end
 
-      @options[:logger]&.info("Starting HTTP request: #{method.upcase} #{url}")
+      @options[:logger]&.info(
+        {
+          message: "Starting Chimera HTTP Request",
+          method: method.upcase,
+          url: url,
+          code: nil,
+          runtime: 0,
+          user_agent: Typhoeus::Config.user_agent,
+        }
+      )
 
       self
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
