@@ -16,7 +16,6 @@ module ChimeraHttpClient
       @result
     end
 
-    # rubocop:disable Metrics/MethodLength
     def create(url:, method:, body: nil, options: {}, headers: {})
       request_params = {
         method:          method,
@@ -73,7 +72,6 @@ module ChimeraHttpClient
 
       self
     end
-    # rubocop:enable Metrics/MethodLength
 
     private
 
