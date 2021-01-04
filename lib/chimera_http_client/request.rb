@@ -1,3 +1,5 @@
+require "logger" # TODO: remove after debugging
+
 module ChimeraHttpClient
   class Request
     TIMEOUT_SECONDS = 3
@@ -76,6 +78,18 @@ module ChimeraHttpClient
     private
 
     def on_complete_handler(response)
+      # @options[:logger]&.debug(
+      logger = Logger.new(STDOUT)
+      logger.debug({
+        message: "Response Body of Chimera HTTP Request",
+        code: response.code,
+        return_code: response.return_code,
+        response_body: response.body, # NOTE: this might contain sensitive information!
+        response_success: response.success?,
+        runtime: response.total_time&.round(3),
+        user_agent: Typhoeus::Config.user_agent,
+      })
+
       return Response.new(response, @options) if response.success?
 
       exception_for(response)
@@ -88,7 +102,7 @@ module ChimeraHttpClient
       when 301, 302, 303, 307
         RedirectionError.new(response, @options) # TODO: throw error conditionally
       when 200..399
-        nil
+        nil # TODO: decide to either raise error or return a Response
       when 400
         BadRequestError.new(response, @options)
       when 401
