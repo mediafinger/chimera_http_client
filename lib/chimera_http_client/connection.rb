@@ -17,7 +17,7 @@ module ChimeraHttpClient
         monitor: @monitor,
       }
 
-      @request ||= Request.new(options)
+      Request.new(options)
     end
 
     private
