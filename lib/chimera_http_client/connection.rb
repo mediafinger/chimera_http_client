@@ -23,7 +23,7 @@ module ChimeraHttpClient
     private
 
     def run(method, endpoint, options = {})
-      options[:body_optional] = true if %i[get delete head options trace].include?(method)
+      options[:body_optional] = true if %i(get delete head options trace).include?(method)
       body = extract_body(options)
       headers = extract_headers(options, default_headers)
 
@@ -37,7 +37,7 @@ module ChimeraHttpClient
     # end
     #
     def define_http_methods
-      %i[get post put patch delete head options trace].each do |method_name|
+      %i(get post put patch delete head options trace).each do |method_name|
         self.class.send(:define_method, method_name) do |endpoint, options = {}|
           send(:run, method_name, endpoint, options)
         end

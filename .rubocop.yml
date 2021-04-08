@@ -1,11 +1,18 @@
+require:
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
-  DisplayCopNames: true
   TargetRubyVersion: 2.5
+  DisplayCopNames: true
+  NewCops: enable # but feel free to disable them below
   Exclude:
       - vendor/**/*
       - config.ru
 
-# Cop supports --auto-correct.
+Layout/EmptyLineBetweenDefs:
+  AllowAdjacentOneLineDefs: true
+
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: special_inside_parentheses, consistent, align_braces
 Layout/FirstHashElementIndentation:
@@ -20,6 +27,24 @@ Layout/LineLength:
 Metrics:
   Enabled: false
 
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 25
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4
+
+Style/CaseLikeIf:
+  Enabled: false
+
 Style/CommentedKeyword:
   Enabled: false
 
@@ -28,7 +53,6 @@ Style/Documentation:
 
 Style/DoubleNegation:
   Enabled: true
-
 Style/FrozenStringLiteralComment:
   Enabled: false
 
@@ -44,11 +68,22 @@ Style/StringLiterals:
     - single_quotes
     - double_quotes
 
-# Cop supports --auto-correct.
 Style/NumericLiterals:
   MinDigits: 15
 
-# Cop supports --auto-correct.
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: ()
+    "%": ()
+    "%i": ()
+    "%q": ()
+    "%Q": ()
+    "%r": "{}"
+    "%s": ()
+    "%w": ()
+    "%W": ()
+    "%x": ()
+
 # Configuration parameters: AllowAsExpressionSeparator.
 Style/Semicolon:
   AllowAsExpressionSeparator: true
@@ -56,7 +91,6 @@ Style/Semicolon:
 Style/SymbolProc:
   Enabled: false
 
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
 # SupportedStyles: comma, consistent_comma, no_comma
 Style/TrailingCommaInArrayLiteral:
@@ -65,7 +99,6 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
-# Cop supports --auto-correct.
 # Configuration parameters: SupportedStyles, MinSize, WordRegex.
 # SupportedStyles: percent, brackets
 Style/WordArray:

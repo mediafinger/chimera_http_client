@@ -11,27 +11,27 @@ context "when http errors happen" do
   let(:expected_parsed_body) { { message: "error #{failure_code}" } }
 
   RSpec.shared_examples "an Error" do
-    it { expect(subject.error?).to be true }
-    it { expect(subject.code).to eq(failure_code) }
-    it { expect(subject.class).to eq(described_class) }
-    it { expect(subject.body).to eq(expected_parsed_body.to_json) }
-    it { expect(subject.message).to eq(expected_parsed_body.to_json.to_s) }
+    it { expect(error.error?).to be true }
+    it { expect(error.code).to eq(failure_code) }
+    it { expect(error.class).to eq(described_class) }
+    it { expect(error.body).to eq(expected_parsed_body.to_json) }
+    it { expect(error.message).to eq(expected_parsed_body.to_json.to_s) }
 
     it do
-      expect(subject.to_s).to match(
+      expect(error.to_s).to match(
         "#{described_class} (#{failure_code}) #{expected_parsed_body.to_json}, URL: #{base_url}/errors/#{failure_code}"
       )
     end
 
-    it { expect(JSON.parse(subject.to_json)).to be_kind_of(Hash) }
-    it { expect(JSON.parse(subject.to_json)["code"]).to eq failure_code }
-    it { expect(JSON.parse(subject.to_json)["error_class"]).to eq(subject.class.name) }
-    it { expect(JSON.parse(subject.to_json)["message"]).to be_truthy }
-    it { expect(JSON.parse(subject.to_json)["method"]).to eq("get") }
-    it { expect(JSON.parse(subject.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
+    it { expect(JSON.parse(error.to_json)).to be_kind_of(Hash) }
+    it { expect(JSON.parse(error.to_json)["code"]).to eq failure_code }
+    it { expect(JSON.parse(error.to_json)["error_class"]).to eq(error.class.name) }
+    it { expect(JSON.parse(error.to_json)["message"]).to be_truthy }
+    it { expect(JSON.parse(error.to_json)["method"]).to eq("get") }
+    it { expect(JSON.parse(error.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
 
-    it { expect(subject.parsed_body).to be_kind_of(Hash) }
-    it { expect(subject.parsed_body).to eq(JSON.parse(expected_parsed_body.to_json)) }
+    it { expect(error.parsed_body).to be_kind_of(Hash) }
+    it { expect(error.parsed_body).to eq(JSON.parse(expected_parsed_body.to_json)) }
   end
 
   # TODO: make it conditional if a redirect should be handled as an error or not
@@ -110,20 +110,20 @@ context "when http errors happen" do
     let(:failure_code) { 0 }
     let(:class_name) { "HttpConnectionError" }
 
-    it { expect(subject.error?).to be true }
-    it { expect(subject.code).to eq(failure_code) }
-    it { expect(subject.class).to eq(ChimeraHttpClient::ConnectionError) }
-    it { expect(subject.to_s).to match("#{described_class} (#{failure_code}) , URL: #{base_url}/errors/#{failure_code}") }
+    it { expect(error.error?).to be true }
+    it { expect(error.code).to eq(failure_code) }
+    it { expect(error.class).to eq(described_class) }
+    it { expect(error.to_s).to match("#{described_class} (#{failure_code}) , URL: #{base_url}/errors/#{failure_code}") }
 
-    it { expect(JSON.parse(subject.to_json)).to be_kind_of(Hash) }
-    it { expect(JSON.parse(subject.to_json)["code"]).to eq 0 }
-    it { expect(JSON.parse(subject.to_json)["error_class"]).to eq("ChimeraHttpClient::ConnectionError") }
-    it { expect(JSON.parse(subject.to_json)["message"]).to be_truthy }
-    it { expect(JSON.parse(subject.to_json)["method"]).to eq("get") }
-    it { expect(JSON.parse(subject.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
+    it { expect(JSON.parse(error.to_json)).to be_kind_of(Hash) }
+    it { expect(JSON.parse(error.to_json)["code"]).to eq 0 }
+    it { expect(JSON.parse(error.to_json)["error_class"]).to eq("ChimeraHttpClient::ConnectionError") }
+    it { expect(JSON.parse(error.to_json)["message"]).to be_truthy }
+    it { expect(JSON.parse(error.to_json)["method"]).to eq("get") }
+    it { expect(JSON.parse(error.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
 
-    it { expect(subject.parsed_body).to be_kind_of(Hash) }
-    it { expect(subject.parsed_body).to eq({ "non_json_body" => "" }) }
+    it { expect(error.parsed_body).to be_kind_of(Hash) }
+    it { expect(error.parsed_body).to eq({ "non_json_body" => "" }) }
   end
 
   # the TimeoutError tests pass, but they take longer than the rest of the whole test suite
@@ -132,20 +132,20 @@ context "when http errors happen" do
     let(:failure_code) { "timeout" }
     let(:class_name) { "HttpTimeoutError" }
 
-    it { expect(subject.error?).to be true }
-    it { expect(subject.code).to eq(0) }
-    it { expect(subject.class).to eq(ChimeraHttpClient::TimeoutError) }
-    it { expect(subject.to_s).to match("#{described_class} (0) , URL: #{base_url}/errors/#{failure_code}") }
+    it { expect(error.error?).to be true }
+    it { expect(error.code).to eq(0) }
+    it { expect(error.class).to eq(ChimeraHttpClient::TimeoutError) }
+    it { expect(error.to_s).to match("#{described_class} (0) , URL: #{base_url}/errors/#{failure_code}") }
 
-    it { expect(JSON.parse(subject.to_json)).to be_kind_of(Hash) }
-    it { expect(JSON.parse(subject.to_json)["code"]).to eq 0 }
-    it { expect(JSON.parse(subject.to_json)["error_class"]).to eq("ChimeraHttpClient::TimeoutError") }
-    it { expect(JSON.parse(subject.to_json)["message"]).to be_truthy }
-    it { expect(JSON.parse(subject.to_json)["method"]).to eq("get") }
-    it { expect(JSON.parse(subject.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
+    it { expect(JSON.parse(error.to_json)).to be_kind_of(Hash) }
+    it { expect(JSON.parse(error.to_json)["code"]).to eq 0 }
+    it { expect(JSON.parse(error.to_json)["error_class"]).to eq("ChimeraHttpClient::TimeoutError") }
+    it { expect(JSON.parse(error.to_json)["message"]).to be_truthy }
+    it { expect(JSON.parse(error.to_json)["method"]).to eq("get") }
+    it { expect(JSON.parse(error.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
 
-    it { expect(subject.parsed_body).to be_kind_of(Hash) }
-    it { expect(subject.parsed_body).to eq({ "non_json_body" => "" }) }
+    it { expect(error.parsed_body).to be_kind_of(Hash) }
+    it { expect(error.parsed_body).to eq({ "non_json_body" => "" }) }
   end
 
   describe ChimeraHttpClient::Error do

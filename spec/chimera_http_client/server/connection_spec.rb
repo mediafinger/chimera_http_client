@@ -11,7 +11,7 @@ RSpec.shared_examples "a Connection call that is successful" do
   it { expect(subject.parsed_body).to eq(response_body) }
   it { expect(subject.error?).to be false }
 
-  it { expect { subject }.to_not raise_error }
+  it { expect { subject }.not_to raise_error }
 end
 
 RSpec.shared_examples "a Connection call that returns an error" do
@@ -353,7 +353,7 @@ describe ChimeraHttpClient::Connection do
     it { expect(connection.send(:url, "namespace/endpoint/")).to eq(expected_url) }
     it { expect(connection.send(:url, "/namespace/endpoint/")).to eq(expected_url) }
 
-    it { expect(connection.send(:url, %w[namespace endpoint])).to eq(expected_url) }
+    it { expect(connection.send(:url, %w(namespace endpoint))).to eq(expected_url) }
     it { expect(connection.send(:url, ["/namespace", "endpoint"])).to eq(expected_url) }
     it { expect(connection.send(:url, ["namespace", "endpoint/"])).to eq(expected_url) }
     it { expect(connection.send(:url, ["/namespace", "endpoint/"])).to eq(expected_url) }
@@ -365,6 +365,6 @@ describe ChimeraHttpClient::Connection do
 
     it { expect(connection.send(:url, ["/", :namespace, "/", "endpoint", "/"])).to eq(expected_url) }
     it { expect(connection.send(:url, :"namespace/endpoint")).to eq(expected_url) }
-    it { expect(connection.send(:url, %i[namespace endpoint])).to eq(expected_url) }
+    it { expect(connection.send(:url, %i(namespace endpoint))).to eq(expected_url) }
   end
 end

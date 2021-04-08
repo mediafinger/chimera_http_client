@@ -2,7 +2,7 @@ module ChimeraHttpClient
   class Queue < Base
     def add(method, endpoint, options = {})
       http_method = method.downcase.to_sym
-      options[:body_optional] = true if %i[get delete head options trace].include?(http_method)
+      options[:body_optional] = true if %i(get delete head options trace).include?(http_method)
 
       queued_requests << create_request(
         method: http_method,

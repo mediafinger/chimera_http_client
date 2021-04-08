@@ -88,7 +88,7 @@ module ChimeraHttpClient
       when 301, 302, 303, 307
         RedirectionError.new(response, @options) # TODO: throw error conditionally
       when 200..399
-        nil
+        nil # TODO: decide to either raise error or return a Response
       when 400
         BadRequestError.new(response, @options)
       when 401

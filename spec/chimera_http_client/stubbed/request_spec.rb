@@ -44,6 +44,7 @@ describe ChimeraHttpClient::Request do
 
     context "204" do
       let(:response_code) { 204 }
+
       it_behaves_like "a Request"
     end
 
@@ -57,61 +58,73 @@ describe ChimeraHttpClient::Request do
 
     context "302" do
       let(:response_code) { 302 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::RedirectionError) }
     end
 
     context "400" do
       let(:response_code) { 400 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::BadRequestError) }
     end
 
     context "401" do
       let(:response_code) { 401 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::UnauthorizedError) }
     end
 
     context "403" do
       let(:response_code) { 403 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::ForbiddenError) }
     end
 
     context "404" do
       let(:response_code) { 404 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::NotFoundError) }
     end
 
     context "405" do
       let(:response_code) { 405 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::MethodNotAllowedError) }
     end
 
     context "409" do
       let(:response_code) { 409 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::ResourceConflictError) }
     end
 
     context "422" do
       let(:response_code) { 422 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::UnprocessableEntityError) }
     end
 
     context "450" do
       let(:response_code) { 450 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::ClientError) }
     end
 
     context "500" do
       let(:response_code) { 500 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::ServerError) }
     end
 
     context "0" do
       let(:response_code) { 0 }
+
       it { expect(request).to be_kind_of(ChimeraHttpClient::ConnectionError) }
     end
 
     context "when no logger is provided" do
       subject(:request) { described_class.new(deserializer: deserializer).run(url: url, method: :get) }
+
       let(:response_code) { 200 }
 
       it_behaves_like "a Request"

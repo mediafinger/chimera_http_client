@@ -11,7 +11,7 @@ RSpec.shared_examples "a Connection call that is successful" do
   it { expect(subject.parsed_body).to eq(response_body) }
   it { expect(subject.error?).to be false }
 
-  it { expect { subject }.to_not raise_error }
+  it { expect { subject }.not_to raise_error }
 end
 
 RSpec.shared_examples "a Connection call that returns an error" do
@@ -61,11 +61,11 @@ describe ChimeraHttpClient::Connection do
   let(:failure_code) { 400 }
   let(:failure_body) { "#{failure_code} BadRequest" }
 
-  let(:context) { double("context") }
+  let(:context) { double("context") } # rubocop:disable RSpec/VerifiedDoubles
   let(:request_headers) { { "Content-Type" => "application/json" } }
 
   describe ".new (ensure methods are generated correctly)" do
-    it { expect(connection).to be_kind_of ChimeraHttpClient::Connection }
+    it { expect(connection).to be_kind_of described_class }
 
     it { expect(connection).to respond_to(:request) }
     it { expect(connection).to respond_to(:get) }
@@ -108,12 +108,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that returns an error"
       it_behaves_like "a Connection request with correct headers"
     end
@@ -129,12 +131,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that raises an error"
     end
   end
@@ -150,12 +154,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that returns an error"
       it_behaves_like "a Connection request with correct headers"
     end
@@ -179,12 +185,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that raises an error"
     end
 
@@ -208,6 +216,7 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
 
@@ -215,6 +224,7 @@ describe ChimeraHttpClient::Connection do
         let(:body) { { number: "+493012345678" }.to_json }
 
         before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
         it_behaves_like "a Connection call that is successful"
         it_behaves_like "a Connection request with correct headers"
       end
@@ -222,6 +232,7 @@ describe ChimeraHttpClient::Connection do
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that returns an error"
       it_behaves_like "a Connection request with correct headers"
     end
@@ -237,6 +248,7 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
 
@@ -244,6 +256,7 @@ describe ChimeraHttpClient::Connection do
         let(:body) { { number: "+493012345678" }.to_json }
 
         before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
         it_behaves_like "a Connection call that is successful"
         it_behaves_like "a Connection request with correct headers"
       end
@@ -251,6 +264,7 @@ describe ChimeraHttpClient::Connection do
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that raises an error"
     end
   end
@@ -266,12 +280,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that returns an error"
       it_behaves_like "a Connection request with correct headers"
     end
@@ -287,12 +303,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that raises an error"
     end
   end
@@ -308,12 +326,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that returns an error"
       it_behaves_like "a Connection request with correct headers"
     end
@@ -329,12 +349,14 @@ describe ChimeraHttpClient::Connection do
 
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
       it_behaves_like "a Connection call that is successful"
       it_behaves_like "a Connection request with correct headers"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
+
       it_behaves_like "a Connection call that raises an error"
     end
   end
@@ -347,7 +369,7 @@ describe ChimeraHttpClient::Connection do
     it { expect(connection.send(:url, "namespace/endpoint/")).to eq(expected_url) }
     it { expect(connection.send(:url, "/namespace/endpoint/")).to eq(expected_url) }
 
-    it { expect(connection.send(:url, %w[namespace endpoint])).to eq(expected_url) }
+    it { expect(connection.send(:url, %w(namespace endpoint))).to eq(expected_url) }
     it { expect(connection.send(:url, ["/namespace", "endpoint"])).to eq(expected_url) }
     it { expect(connection.send(:url, ["namespace", "endpoint/"])).to eq(expected_url) }
     it { expect(connection.send(:url, ["/namespace", "endpoint/"])).to eq(expected_url) }
@@ -359,6 +381,6 @@ describe ChimeraHttpClient::Connection do
 
     it { expect(connection.send(:url, ["/", :namespace, "/", "endpoint", "/"])).to eq(expected_url) }
     it { expect(connection.send(:url, :"namespace/endpoint")).to eq(expected_url) }
-    it { expect(connection.send(:url, %i[namespace endpoint])).to eq(expected_url) }
+    it { expect(connection.send(:url, %i(namespace endpoint))).to eq(expected_url) }
   end
 end
