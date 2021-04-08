@@ -17,13 +17,13 @@ The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](ht
 
 ### Ruby version
 
-| Chimera version | Ruby version |
-|:----------------|:-------------|
-| >= 1.1          | >= 2.5       |
-| =  1.0          | >= 2.4       |
-| <= 0.5          | >= 2.1       |
+| Chimera version | Ruby version   |
+|:----------------|:---------------|
+| >= 1.1          | >= 2.5         |
+| =  1.0          | >= 2.4, <= 3.0 |
+| <= 0.5          | >= 2.1, <= 3.0 |
 
-The test suite of v1.3 and newer also passes on **JRuby** and on **TruffleRuby**.
+The test suite of v1.3 passes on **JRuby**, but not on **TruffleRuby**.
 
 ### ENV variables
 
