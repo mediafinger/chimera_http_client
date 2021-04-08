@@ -1,6 +1,6 @@
 require "server_spec_helper"
 
-describe ChimeraHttpClient::Queue do
+describe ChimeraHttpClient::Queue do # rubocop:disable RSpec/FilePath
   let(:queue) { described_class.new(base_url: base_url) }
   let(:base_url) { "#{UsersServer.endpoint_url}/api/v1" }
 

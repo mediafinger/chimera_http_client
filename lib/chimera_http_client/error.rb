@@ -10,6 +10,8 @@ module ChimeraHttpClient
       @response = response # contains the request
 
       @deserializer = options[:deserializer][:error]
+
+      super(response.body)
     end
 
     def error?

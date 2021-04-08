@@ -1,6 +1,6 @@
 require "server_spec_helper"
 
-describe ChimeraHttpClient::Connection do
+describe ChimeraHttpClient::Connection do # rubocop:disable RSpec/FilePath
   let(:connection)    { described_class.new(base_url: base_url) }
   let(:base_url)      { "#{UsersServer.endpoint_url}/api/v1" }
   let(:endpoint)      { "users/22" }

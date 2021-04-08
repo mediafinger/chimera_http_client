@@ -40,6 +40,7 @@ describe ChimeraHttpClient::Response do
 
     it { expect(response.class).to eq(described_class) }
     it { expect(response.body).to eq(response_body) }
+
     it "throws a helpful error" do
       expect { response.parsed_body }.to raise_error(
         ChimeraHttpClient::JsonParserError, /Could not parse body as JSON *./

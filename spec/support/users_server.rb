@@ -105,7 +105,7 @@ class UsersServer < Sinatra::Base
     return "<html><body>Hello :-)</body></html>"
   end
 
-  RESPONSE_BODY ||=
+  RESPONSE_BODY =
     {
       entries: [
         {

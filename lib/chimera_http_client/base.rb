@@ -56,7 +56,7 @@ module ChimeraHttpClient
 
     # Remove leading and trailing "/" from a give part of a String (usually URL or endpoint)
     def trim(element)
-      element.to_s.sub(%r{^\/}, "").chomp("/")
+      element.to_s.sub(%r{^/}, "").chomp("/")
     end
   end
 end
