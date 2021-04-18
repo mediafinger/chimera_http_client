@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.shared_examples "a Response" do
+RSpec.shared_examples "a Response (with stubbed response)" do
   it { expect(subject.error?).to be false }
   it { expect(subject.response).to eq(typhoeus_response) }
 
@@ -25,7 +25,7 @@ describe ChimeraHttpClient::Response do
   let(:response_json) { response_body.to_json }
   let(:response_time) { 0.5 }
 
-  it_behaves_like "a Response"
+  it_behaves_like "a Response (with stubbed response)"
 
   context "when body is no json" do
     let(:response_json) { "<html>Hello World</html>" }

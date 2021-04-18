@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.shared_examples "a Request" do
+RSpec.shared_examples "a Request (with stubbed response)" do
   it { expect(subject).to be_kind_of(ChimeraHttpClient::Response) }
   it { expect(subject.code).to eq(response_code) }
   it { expect(subject.error?).to be false }
@@ -39,13 +39,13 @@ describe ChimeraHttpClient::Request do
     context "success" do
       let(:response_code) { 200 }
 
-      it_behaves_like "a Request"
+      it_behaves_like "a Request (with stubbed response)"
     end
 
     context "204" do
       let(:response_code) { 204 }
 
-      it_behaves_like "a Request"
+      it_behaves_like "a Request (with stubbed response)"
     end
 
     context "Timeout" do
@@ -127,7 +127,7 @@ describe ChimeraHttpClient::Request do
 
       let(:response_code) { 200 }
 
-      it_behaves_like "a Request"
+      it_behaves_like "a Request (with stubbed response)"
     end
   end
 end

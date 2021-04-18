@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.shared_examples "a Connection call that is successful" do
+RSpec.shared_examples "a Connection call that is successful (with stubbed response)" do
   it { expect(subject).to be_kind_of(ChimeraHttpClient::Response) }
 
   it { expect(subject.code).to eq(response_code) }
@@ -14,7 +14,7 @@ RSpec.shared_examples "a Connection call that is successful" do
   it { expect { subject }.not_to raise_error }
 end
 
-RSpec.shared_examples "a Connection call that returns an error" do
+RSpec.shared_examples "a Connection call that returns an error (with stubbed response)" do
   it { expect(subject).to be_kind_of(ChimeraHttpClient::Error) }
 
   it { expect(subject.error?).to be true }
@@ -24,13 +24,13 @@ RSpec.shared_examples "a Connection call that returns an error" do
   it { expect(subject.time).to eq(response_time) }
 end
 
-RSpec.shared_examples "a Connection call that raises an error" do
+RSpec.shared_examples "a Connection call that raises an error (with stubbed response)" do
   it "raises an error" do
     expect { subject }.to raise_error(ChimeraHttpClient::Error)
   end
 end
 
-RSpec.shared_examples "a Connection request with correct headers" do
+RSpec.shared_examples "a Connection request with correct headers (with stubbed response)" do
   it "sets the expected headers" do
     expect(subject.response.request.original_options).to eq(
       {
@@ -109,15 +109,15 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that returns an error"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that returns an error (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
   end
 
@@ -132,14 +132,14 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that raises an error"
+      it_behaves_like "a Connection call that raises an error (with stubbed response)"
     end
   end
 
@@ -155,15 +155,15 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that returns an error"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that returns an error (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "missing body" do
@@ -186,14 +186,14 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that raises an error"
+      it_behaves_like "a Connection call that raises an error (with stubbed response)"
     end
 
     context "missing body" do
@@ -217,24 +217,24 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
 
       context "with body" do
         let(:body) { { number: "+493012345678" }.to_json }
 
         before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-        it_behaves_like "a Connection call that is successful"
-        it_behaves_like "a Connection request with correct headers"
+        it_behaves_like "a Connection call that is successful (with stubbed response)"
+        it_behaves_like "a Connection request with correct headers (with stubbed response)"
       end
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that returns an error"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that returns an error (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
   end
 
@@ -249,23 +249,23 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
 
       context "with body" do
         let(:body) { { number: "+493012345678" }.to_json }
 
         before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-        it_behaves_like "a Connection call that is successful"
-        it_behaves_like "a Connection request with correct headers"
+        it_behaves_like "a Connection call that is successful (with stubbed response)"
+        it_behaves_like "a Connection request with correct headers (with stubbed response)"
       end
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that raises an error"
+      it_behaves_like "a Connection call that raises an error (with stubbed response)"
     end
   end
 
@@ -281,15 +281,15 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that returns an error"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that returns an error (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
   end
 
@@ -304,14 +304,14 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that raises an error"
+      it_behaves_like "a Connection call that raises an error (with stubbed response)"
     end
   end
 
@@ -327,15 +327,15 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that returns an error"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that returns an error (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
   end
 
@@ -350,14 +350,14 @@ describe ChimeraHttpClient::Connection do
     context "success" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
 
-      it_behaves_like "a Connection call that is successful"
-      it_behaves_like "a Connection request with correct headers"
+      it_behaves_like "a Connection call that is successful (with stubbed response)"
+      it_behaves_like "a Connection request with correct headers (with stubbed response)"
     end
 
     context "failure" do
       before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(failure_response) }
 
-      it_behaves_like "a Connection call that raises an error"
+      it_behaves_like "a Connection call that raises an error (with stubbed response)"
     end
   end
 

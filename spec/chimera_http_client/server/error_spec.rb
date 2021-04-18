@@ -1,5 +1,29 @@
 require "server_spec_helper"
 
+RSpec.shared_examples "an Error" do
+  it { expect(error.error?).to be true }
+  it { expect(error.code).to eq(failure_code) }
+  it { expect(error.class).to eq(described_class) }
+  it { expect(error.body).to eq(expected_parsed_body.to_json) }
+  it { expect(error.message).to eq(expected_parsed_body.to_json.to_s) }
+
+  it do
+    expect(error.to_s).to match(
+      "#{described_class} (#{failure_code}) #{expected_parsed_body.to_json}, URL: #{base_url}/errors/#{failure_code}"
+    )
+  end
+
+  it { expect(JSON.parse(error.to_json)).to be_kind_of(Hash) }
+  it { expect(JSON.parse(error.to_json)["code"]).to eq failure_code }
+  it { expect(JSON.parse(error.to_json)["error_class"]).to eq(error.class.name) }
+  it { expect(JSON.parse(error.to_json)["message"]).to be_truthy }
+  it { expect(JSON.parse(error.to_json)["method"]).to eq("get") }
+  it { expect(JSON.parse(error.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
+
+  it { expect(error.parsed_body).to be_kind_of(Hash) }
+  it { expect(error.parsed_body).to eq(JSON.parse(expected_parsed_body.to_json)) }
+end
+
 context "when http errors happen" do
   subject(:error) { connection.get("errors/#{failure_code}") }
 
@@ -9,30 +33,6 @@ context "when http errors happen" do
   let(:timeout) { 0.2 }
 
   let(:expected_parsed_body) { { message: "error #{failure_code}" } }
-
-  RSpec.shared_examples "an Error" do
-    it { expect(error.error?).to be true }
-    it { expect(error.code).to eq(failure_code) }
-    it { expect(error.class).to eq(described_class) }
-    it { expect(error.body).to eq(expected_parsed_body.to_json) }
-    it { expect(error.message).to eq(expected_parsed_body.to_json.to_s) }
-
-    it do
-      expect(error.to_s).to match(
-        "#{described_class} (#{failure_code}) #{expected_parsed_body.to_json}, URL: #{base_url}/errors/#{failure_code}"
-      )
-    end
-
-    it { expect(JSON.parse(error.to_json)).to be_kind_of(Hash) }
-    it { expect(JSON.parse(error.to_json)["code"]).to eq failure_code }
-    it { expect(JSON.parse(error.to_json)["error_class"]).to eq(error.class.name) }
-    it { expect(JSON.parse(error.to_json)["message"]).to be_truthy }
-    it { expect(JSON.parse(error.to_json)["method"]).to eq("get") }
-    it { expect(JSON.parse(error.to_json)["url"]).to eq "#{base_url}/errors/#{failure_code}" }
-
-    it { expect(error.parsed_body).to be_kind_of(Hash) }
-    it { expect(error.parsed_body).to eq(JSON.parse(expected_parsed_body.to_json)) }
-  end
 
   # TODO: make it conditional if a redirect should be handled as an error or not
   describe ChimeraHttpClient::RedirectionError do
