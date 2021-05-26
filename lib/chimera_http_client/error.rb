@@ -14,6 +14,10 @@ module ChimeraHttpClient
       super(response.body)
     end
 
+    def success?
+      response.success?
+    end
+
     def error?
       true
     end

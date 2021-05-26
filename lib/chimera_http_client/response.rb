@@ -15,6 +15,10 @@ module ChimeraHttpClient
       deserializer.call(body)
     end
 
+    def success?
+      response.success?
+    end
+
     def error?
       false
     end
