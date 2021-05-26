@@ -2,6 +2,7 @@ require "server_spec_helper"
 
 RSpec.shared_examples "an Error" do
   it { expect(error.error?).to be true }
+  it { expect(error.success?).to be false }
   it { expect(error.code).to eq(failure_code) }
   it { expect(error.class).to eq(described_class) }
   it { expect(error.body).to eq(expected_parsed_body.to_json) }

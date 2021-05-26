@@ -2,6 +2,7 @@ require "server_spec_helper"
 
 RSpec.shared_examples "a Response" do
   it { expect(subject.error?).to be false }
+  it { expect(subject.success?).to be true }
   it { expect(subject.class).to eq(ChimeraHttpClient::Response) }
 
   it { expect(subject.body).to eq(response_body.to_json) }
