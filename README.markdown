@@ -329,6 +329,7 @@ The `ChimeraHttpClient::Response` objects have the following interface:
     * code             (http code, should be 200 or 2xx)
     * time             (for monitoring)
     * response         (the full response object, including the request)
+    * success?         (returns the result of response.success?)
     * error?           (returns false)
     * parsed_body      (returns the result of `deserializer[:response].call(body)`)
 
@@ -342,6 +343,7 @@ All errors inherit from `ChimeraHttpClient::Error` and therefore offer the same 
     * body             (alias => message)
     * time             (for monitoring)
     * response         (the full response object, including the request)
+    * success?         (returns the result of response.success?)
     * error?           (returns true)
     * error_class      (e.g. ChimeraHttpClient::NotFoundError)
     * to_s             (information for logging / respects ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS'])
