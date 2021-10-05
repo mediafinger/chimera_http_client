@@ -74,6 +74,12 @@ describe ChimeraHttpClient::Request do
       it { expect(request).to be_kind_of(ChimeraHttpClient::UnauthorizedError) }
     end
 
+    context "402" do
+      let(:response_code) { 402 }
+
+      it { expect(request).to be_kind_of(ChimeraHttpClient::PaymentRequiredError) }
+    end
+
     context "403" do
       let(:response_code) { 403 }
 

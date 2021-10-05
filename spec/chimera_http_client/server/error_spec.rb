@@ -57,6 +57,13 @@ context "when http errors happen" do
     it_behaves_like "an Error"
   end
 
+  describe ChimeraHttpClient::PaymentRequiredError do
+    let(:failure_code) { 402 }
+    let(:class_name) { "HttpPaymentRequiredError" }
+
+    it_behaves_like "an Error"
+  end
+
   describe ChimeraHttpClient::ForbiddenError do
     let(:failure_code) { 403 }
     let(:class_name) { "HttpForbiddenError" }

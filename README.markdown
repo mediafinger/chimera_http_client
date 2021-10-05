@@ -153,9 +153,9 @@ connection.get("/users/#{id}")
 
 All forms above ave valid and will make a request to the same URL.
 
-* Please take note that _the endpoint can be given as a String, a Symbol, or an Array._  
-* While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._  
-* When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._  
+* Please take note that _the endpoint can be given as a String, a Symbol, or an Array._
+* While they do no harm, there is _no need to pass leading or trailing `/` in endpoints._
+* When passing the endpoint as an Array, _it's elements are converted to Strings and concatenated with `/`._
 
 #### Optional request parameters
 
@@ -185,7 +185,7 @@ connection.post(
 
 #### Basic auth
 
-In case you need to use an API that is protected by **basic_auth** just pass the credentials as optional parameters:  
+In case you need to use an API that is protected by **basic_auth** just pass the credentials as optional parameters:
 `username: 'admin', password: 'secret'`
 
 #### Timeout duration
@@ -355,6 +355,7 @@ The error classes and their corresponding http error codes:
     RedirectionError          # 301, 302, 303, 307
     BadRequestError           # 400
     UnauthorizedError         # 401
+    PaymentRequiredError      # 402
     ForbiddenError            # 403
     NotFoundError             # 404
     MethodNotAllowedError     # 405
