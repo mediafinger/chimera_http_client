@@ -93,6 +93,8 @@ module ChimeraHttpClient
         BadRequestError.new(response, @options)
       when 401
         UnauthorizedError.new(response, @options)
+      when 402
+        PaymentRequiredError.new(response, @options)
       when 403
         ForbiddenError.new(response, @options)
       when 404

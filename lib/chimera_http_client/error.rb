@@ -70,6 +70,7 @@ module ChimeraHttpClient
   class RedirectionError < Error; end          # 301, 302, 303, 307
   class BadRequestError < Error; end           # 400
   class UnauthorizedError < Error; end         # 401
+  class PaymentRequiredError < Error; end      # 402
   class ForbiddenError < Error; end            # 403
   class NotFoundError < Error; end             # 404
   class MethodNotAllowedError < Error; end     # 405

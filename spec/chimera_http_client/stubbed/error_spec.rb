@@ -71,6 +71,13 @@ context "http errors" do
     it_behaves_like "an Error (with stubbed response)"
   end
 
+  describe ChimeraHttpClient::PaymentRequiredError do
+    let(:failure_code) { 402 }
+    let(:class_name) { "HttpPaymentRequiredError" }
+
+    it_behaves_like "an Error (with stubbed response)"
+  end
+
   describe ChimeraHttpClient::ForbiddenError do
     let(:failure_code) { 403 }
     let(:class_name) { "HttpForbiddenError" }
