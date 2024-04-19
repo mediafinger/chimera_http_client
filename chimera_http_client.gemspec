@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "chimera_http_client/version"
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version = ">= 2.5.0" # without Deserializer's `rescue` in block it would be 2.4.4 (because of zeitwerk)
+  spec.required_ruby_version = ">= 2.7.0" # probably 2.5.0 still works, but 2.7 is the oldest tested version
 
   spec.name          = "chimera_http_client"
   spec.version       = ChimeraHttpClient::VERSION
