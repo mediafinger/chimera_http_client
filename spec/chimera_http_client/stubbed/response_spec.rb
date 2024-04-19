@@ -18,7 +18,7 @@ describe ChimeraHttpClient::Response do
   subject(:response) { described_class.new(typhoeus_response, deserializer: deserializer) }
 
   let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
-  let(:deserializer) { { response: ::ChimeraHttpClient::Deserializer.json_response } }
+  let(:deserializer) { { response: ChimeraHttpClient::Deserializer.json_response } }
 
   let(:response_code) { 200 }
   let(:response_body) { { "id" => 42, "name" => "Andy" } }

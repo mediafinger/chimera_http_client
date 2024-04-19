@@ -6,9 +6,13 @@ AllCops:
   TargetRubyVersion: 2.5
   DisplayCopNames: true
   NewCops: enable # but feel free to disable them below
+  SuggestExtensions: false
   Exclude:
       - vendor/**/*
       - config.ru
+
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
 
 Layout/EmptyLineBetweenDefs:
   AllowAdjacentOneLineDefs: true
@@ -27,12 +31,25 @@ Layout/LineLength:
 Metrics:
   Enabled: false
 
+RSpec/ClassCheck:
+  Enabled: false
+
 RSpec/ContextWording:
   Enabled: false
 
 RSpec/ExampleLength:
   Max: 25
 
+RSpec/FilePath:
+  Exclude:
+    - spec/chimera_http_client/server/*
+    - spec/chimera_http_client/stubbed/*
+
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/chimera_http_client/server/*
+    - spec/chimera_http_client/stubbed/*
+    -
 RSpec/MultipleExpectations:
   Enabled: false
 
@@ -41,6 +58,9 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/NestedGroups:
   Max: 4
+
+RSpec/PendingWithoutReason:
+   Enabled: false
 
 Style/CaseLikeIf:
   Enabled: false
@@ -53,6 +73,7 @@ Style/Documentation:
 
 Style/DoubleNegation:
   Enabled: true
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 

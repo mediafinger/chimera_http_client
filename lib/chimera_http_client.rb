@@ -7,5 +7,5 @@ module ChimeraHttpClient
   loader.setup
 
   # as Zeitwerk can't handle innner classes properly :-/
-  require_relative "./chimera_http_client/error"
+  require_relative "chimera_http_client/error"
 end

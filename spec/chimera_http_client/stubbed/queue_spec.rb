@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe ChimeraHttpClient::Queue do # rubocop:disable RSpec/FilePath
+describe ChimeraHttpClient::Queue do
   let(:queue) { described_class.new(base_url: base_url) }
   let(:base_url) { "http://127.0.0.1:3000/v1" }
 

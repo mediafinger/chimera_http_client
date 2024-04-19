@@ -1,6 +1,6 @@
 require "server_spec_helper"
 
-describe ChimeraHttpClient::Connection do # rubocop:disable RSpec/FilePath
+describe ChimeraHttpClient::Connection do
   let(:connection)    { described_class.new(base_url: base_url) }
   let(:base_url)      { "#{UsersServer.endpoint_url}/api/v1" }
   let(:endpoint)      { "users/22" }
@@ -46,11 +46,11 @@ describe ChimeraHttpClient::Connection do # rubocop:disable RSpec/FilePath
 
       it "records request and custom context information" do
         expect { get }.to output(
-          "url: #{base_url}/users/22\n"\
-          "method: get\n"\
-          "status: 200\n"\
-          "runtime: 0.015\n"\
-          "completed_at: #{frozen_time}\n"\
+          "url: #{base_url}/users/22\n" \
+          "method: get\n" \
+          "status: 200\n" \
+          "runtime: 0.015\n" \
+          "completed_at: #{frozen_time}\n" \
           "context: {:user_id=>90210}\n"
         ).to_stdout
       end

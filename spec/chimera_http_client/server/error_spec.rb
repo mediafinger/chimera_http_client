@@ -30,7 +30,7 @@ context "when http errors happen" do
 
   let(:connection) { ChimeraHttpClient::Connection.new(base_url: base_url, deserializer: deserializer, timeout: timeout) }
   let(:base_url) { "#{UsersServer.endpoint_url}/api/v1" }
-  let(:deserializer) { { error: ::ChimeraHttpClient::Deserializer.json_error } }
+  let(:deserializer) { { error: ChimeraHttpClient::Deserializer.json_error } }
   let(:timeout) { 0.2 }
 
   let(:expected_parsed_body) { { message: "error #{failure_code}" } }

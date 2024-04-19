@@ -16,11 +16,11 @@ describe ChimeraHttpClient::Request do
     end
 
     it "does not have a response" do
-      expect(request.request.response).to eq(nil)
+      expect(request.request.response).to be_nil
     end
 
     it "does have an empty result" do
-      expect(request.result).to eq(nil)
+      expect(request.result).to be_nil
     end
   end
 

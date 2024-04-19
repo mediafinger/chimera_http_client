@@ -16,11 +16,11 @@ describe ChimeraHttpClient::Request do
     end
 
     it "does not have a response" do
-      expect(request.request.response).to eq(nil)
+      expect(request.request.response).to be_nil
     end
 
     it "does have an empty result" do
-      expect(request.result).to eq(nil)
+      expect(request.result).to be_nil
     end
   end
 
@@ -29,7 +29,7 @@ describe ChimeraHttpClient::Request do
 
     let(:url) { "http://127.0.0.1/dummy" }
     let(:typhoeus_response) { Typhoeus::Response.new(code: response_code, body: response_json, total_time: response_time) }
-    let(:deserializer) { { error: ::ChimeraHttpClient::Deserializer.json_error } }
+    let(:deserializer) { { error: ChimeraHttpClient::Deserializer.json_error } }
     let(:response_body) { { "id" => 42, "name" => "Andy" } }
     let(:response_json) { response_body.to_json }
     let(:response_time) { 0.5 }

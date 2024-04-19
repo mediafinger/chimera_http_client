@@ -20,7 +20,7 @@ describe ChimeraHttpClient::Response do
 
   let(:connection) { ChimeraHttpClient::Connection.new(base_url: base_url, deserializer: deserializer, timeout: timeout) }
   let(:base_url) { "#{UsersServer.endpoint_url}/api/v1" }
-  let(:deserializer) { { response: ::ChimeraHttpClient::Deserializer.json_response } }
+  let(:deserializer) { { response: ChimeraHttpClient::Deserializer.json_response } }
   let(:timeout) { 0.2 }
 
   let(:response_code) { 200 }
