@@ -7,7 +7,6 @@ And what works for the internal communication between your own apps, will also w
 It offers an **easy to learn interface** and **nice error handling**. And it enables you to **queue HTTP requests to run them in parallel** for better performance and simple aggregating of distributed data.
 
 [![GitHub Actions CI Build Status](https://github.com/mediafinger/chimera_http_client/actions/workflows/action-ci.yml/badge.svg?branch=master)](https://github.com/mediafinger/chimera_http_client/actions/workflows/action-ci.yml)
-[![Travis-CI Build Status](https://travis-ci.com/mediafinger/chimera_http_client.svg?branch=master)](https://travis-ci.com/mediafinger/chimera_http_client)
 [![Gem Version](https://badge.fury.io/rb/chimera_http_client.svg)](https://badge.fury.io/rb/chimera_http_client)
 
 ## Dependencies
