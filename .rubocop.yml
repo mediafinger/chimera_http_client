@@ -3,7 +3,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.7
   DisplayCopNames: true
   NewCops: enable # but feel free to disable them below
   SuggestExtensions: false
