@@ -40,16 +40,11 @@ RSpec/ContextWording:
 RSpec/ExampleLength:
   Max: 25
 
-RSpec/FilePath:
-  Exclude:
-    - spec/chimera_http_client/server/*
-    - spec/chimera_http_client/stubbed/*
-
 RSpec/SpecFilePathFormat:
   Exclude:
     - spec/chimera_http_client/server/*
     - spec/chimera_http_client/stubbed/*
-    -
+
 RSpec/MultipleExpectations:
   Enabled: false
 

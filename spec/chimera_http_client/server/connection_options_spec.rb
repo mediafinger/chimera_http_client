@@ -43,6 +43,13 @@ describe ChimeraHttpClient::Connection do
       subject(:get) { connection.get(endpoint, monitoring_context: monitoring_context) }
 
       let(:monitoring_context) { { user_id: 90210 } }
+      let(:context_representation) do
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4.0")
+          "{user_id: 90210}"
+        else
+          "{:user_id=>90210}"
+        end
+      end
 
       it "records request and custom context information" do
         expect { get }.to output(
@@ -51,7 +58,7 @@ describe ChimeraHttpClient::Connection do
           "status: 200\n" \
           "runtime: 0.015\n" \
           "completed_at: #{frozen_time}\n" \
-          "context: {:user_id=>90210}\n"
+          "context: #{context_representation}\n"
         ).to_stdout
       end
     end
