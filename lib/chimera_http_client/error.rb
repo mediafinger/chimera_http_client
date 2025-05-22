@@ -59,7 +59,7 @@ module ChimeraHttpClient
     end
 
     def log_requests?
-      ENV["CHIMERA_HTTP_CLIENT_LOG_REQUESTS"] == true || ENV["CHIMERA_HTTP_CLIENT_LOG_REQUESTS"] == "true"
+      ENV["CHIMERA_HTTP_CLIENT_LOG_REQUESTS"].to_s == "true"
     end
   end
 

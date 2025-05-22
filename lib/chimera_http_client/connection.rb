@@ -4,7 +4,7 @@
 module ChimeraHttpClient
   class Connection < Base
     def initialize(options = {})
-      super(options)
+      super
 
       define_http_methods
       define_bang_methods

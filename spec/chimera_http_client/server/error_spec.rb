@@ -6,7 +6,7 @@ RSpec.shared_examples "an Error" do
   it { expect(error.code).to eq(failure_code) }
   it { expect(error.class).to eq(described_class) }
   it { expect(error.body).to eq(expected_parsed_body.to_json) }
-  it { expect(error.message).to eq(expected_parsed_body.to_json.to_s) }
+  it { expect(error.message).to eq(expected_parsed_body.to_json) }
 
   it do
     expect(error.to_s).to match(

@@ -30,25 +30,26 @@ Gem::Specification.new do |spec|
   spec.metadata["rubygems_mfa_required"] = "true"
 
   # the only sub-dependencies
-  spec.add_runtime_dependency "typhoeus", "~> 1.1"
-  spec.add_runtime_dependency "zeitwerk", ">= 2.0"
+  spec.add_dependency "typhoeus", "~> 1.4"
+  spec.add_dependency "zeitwerk", ">= 2.6"
 
   # general development and test dependencies
-  spec.add_development_dependency "amazing_print",      ">= 1.2"
-  spec.add_development_dependency "bundler",            ">= 1.0"
-  spec.add_development_dependency "bundler-audit",      ">= 0.6"
-  spec.add_development_dependency "irb",                ">= 1.0"
-  spec.add_development_dependency "rake",               ">= 10.0"
-  spec.add_development_dependency "rspec",              "~> 3.0"
-  spec.add_development_dependency "rubocop",            "~> 1.12"
-  spec.add_development_dependency "rubocop-rake",       "~> 0.5"
-  spec.add_development_dependency "rubocop-rspec",      "~> 2.2"
+  spec.add_development_dependency "amazing_print",      ">= 1.8"
+  spec.add_development_dependency "bundler",            ">= 2.2"
+  spec.add_development_dependency "bundler-audit",      ">= 0.9"
+  spec.add_development_dependency "irb",                ">= 1.15"
+  spec.add_development_dependency "rake",               ">= 13.2"
+  spec.add_development_dependency "rspec",              "~> 3.13"
+  spec.add_development_dependency "rubocop",            "~> 1.75.7"
+  spec.add_development_dependency "rubocop-rake",       "~> 0.7.1"
+  spec.add_development_dependency "rubocop-rspec",      "~> 3.6.0"
 
   # only for server specs with real HTTP requests
-  spec.add_development_dependency "capybara",           "~> 3.0"
+  spec.add_development_dependency "capybara",           "~> 3.40"
   spec.add_development_dependency "capybara_discoball", "~> 0.1"
-  spec.add_development_dependency "sinatra",            "~> 2.0"
-  spec.add_development_dependency "sinatra-contrib",    "~> 2.0"
-  spec.add_development_dependency "webmock",            "~> 3.0"
-  spec.add_development_dependency "webrick"
+  spec.add_development_dependency "rackup",             "~> 2.2"
+  spec.add_development_dependency "sinatra",            "~> 4.1"
+  spec.add_development_dependency "sinatra-contrib",    "~> 4.1"
+  spec.add_development_dependency "webmock",            "~> 3.25"
+  spec.add_development_dependency "webrick",            "~> 1.9"
 end
