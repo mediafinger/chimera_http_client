@@ -14,7 +14,7 @@ It offers an **easy to learn interface** and **nice error handling**. And it ena
 The `chimera_http_client` gem is wrapping the **libcurl** wrapper [**Typhoeus**](https://typhoeus.github.io/) to have a more convenient interface. This allows for fast requests, for caching responses, and for queueing requests to run them in parallel. Connections are persistent by default, which saves subsequent requests from establishing a connection.
 
 The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](https://github.com/fxn/zeitwerk) which is also part of Rails 6.
-
+^
 ### Ruby version
 
 | Chimera version | MRI Ruby version                                    | JRuby | TruffleRuby |
@@ -443,7 +443,7 @@ To build and install this gem onto your local machine, run `bundle exec rake ins
 
 > Maintainers only:
 >
-> To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+> To release a new version, update the version number in `version.rb`, commit this change, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 Bug reports and pull requests are welcome on GitHub at <https://github.com/mediafinger/chimera_http_client>
 
