@@ -22,6 +22,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         ruby: ['3.3', '3.4', '4.0']
+        experimental: [false]
+        # add certain optional combos whose failures won't block merges:
         include:
           - os: ubuntu-latest
             ruby: '2.7'
@@ -39,10 +41,7 @@ jobs:
             ruby: '4.0'
             experimental: true
 
-    runs-on: ${{ matrix.os }}
-
-    # mark certain combos as optional so failures won't block merges:
-    continue-on-error: ${{ matrix.experimental }}
+    runs-on: ${{ matrix.os }}    
 
     steps:
       - uses: actions/checkout@v7
@@ -68,4 +67,5 @@ jobs:
           bundle -v
 
       - name: Run linters and test suite
+        continue-on-error: ${{ matrix.experimental }}
         run: bundle exec rake ci
