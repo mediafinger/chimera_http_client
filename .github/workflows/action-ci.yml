@@ -25,17 +25,14 @@ jobs:
         experimental: [false]
         # add certain optional combos whose failures won't block merges:
         include:
-          - os: ubuntu-latest
-            ruby: '2.7'
+          - os: macos-latest
+            ruby: '4.0'
             experimental: true
           - os: ubuntu-latest
             ruby: 'truffleruby'
             experimental: true
           - os: ubuntu-latest
             ruby: 'jruby'
-            experimental: true
-          - os: macos-latest
-            ruby: '4.0'
             experimental: true
           - os: windows-latest
             ruby: '4.0'

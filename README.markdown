@@ -29,7 +29,9 @@ The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](ht
 
 The test suite of v1.4 passes on **MRI Ruby** (2.5, 2.6, 2.7, 3.0) and on **JRuby**, but not on **TruffleRuby**.  
 The test suite of v1.6 passes on **MRI Ruby** (2.7, 3.0, 3.1, 3.2, 3.3) and on **JRuby** and **TruffleRuby**.  
-The non-MRI Rubys are not part of the regular Matrix, as their CI jobs take 3x as long, but included for new releases.
+v1.8 is no longer tested against MRI Rubies older than 3.3 (but they are likely still supported).  
+All information above is given for **Linux**.  
+**MacOS & Windows** were only tested successfully against **MRI Ruby 4.0** (older versions likely work as well).
 
 ### ENV variables
 
@@ -55,6 +57,7 @@ Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `t
       - [Optional request parameters](#optional-request-parameters)
       - [Basic auth](#basic-auth)
       - [Timeout duration](#timeout-duration)
+      - [Retrying requests](#retrying-requests)
       - [Custom logger](#custom-logger)
       - [Caching responses](#caching-responses)
     - [Example usage](#example-usage)
@@ -99,6 +102,8 @@ The optional parameters are:
 * `deserializers` - custom methods to deserialize the response body, below more details
 * `logger` - an instance of a logger class that implements `#info`, `#warn` and `#error` methods
 * `monitor` - to collect metrics about requests, the basis for your instrumentation needs
+* `retries` - the number of times a failed idempotent request is retried, can be overwritten in any request, the default is `0` (no retries)
+* `retry_delay` - the base delay in seconds between retries, can be overwritten in any request, the default is `1`
 * `timeout` - the timeout for all requests, can be overwritten in any request, the default are 3 seconds
 * `user_agent` - if you would like your calls to identify with a specific user agent
 * `verbose` - the default is `false`, set it to true while debugging issues
@@ -172,6 +177,8 @@ All request methods expect a mandatory `endpoint` and an optional hash as parame
 * `password` - used for a BasicAuth login
 * `timeout` - set a custom timeout per request (the default is 3 seconds)
 * `cache` - optionally overwrite the cache store set in `Connection` in any request
+* `retries` - optionally overwrite the number of retries set in `Connection` for this request
+* `retry_delay` - optionally overwrite the retry delay set in `Connection` for this request
 * `monitoring_context` - pass additional information you want to collect with your instrumentation `monitor`
 
 Example:
@@ -197,6 +204,24 @@ In case you need to use an API that is protected by **basic_auth** just pass the
 The default timeout duration is **3 seconds**.
 
 If you want to use a different timeout, you can pass the key `timeout` when initializing the `Connection`. You can also overwrite it on every call.
+
+#### Retrying requests
+
+Pass `retries` (and optionally `retry_delay`) to `Connection.new`/`Queue.new`, or to any individual request, to automatically retry on transient failures:
+
+```ruby
+connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', retries: 3, retry_delay: 1)
+```
+
+* `retries` - the maximum number of retry attempts. The default is `0` (no retries, fully opt-in).
+* `retry_delay` - the base delay in seconds before the first retry. The default is `1`. Each subsequent retry doubles the previous delay (a fixed 2x backoff, not configurable): with `retry_delay: 1` the delays are `1s, 2s, 4s, ...`.
+
+Retries are automatic and safe by design - they only apply to:
+
+* **idempotent methods**: `get`, `put`, `delete`, `head` - never `post`/`patch`, regardless of the configured `retries`, since retrying a non-idempotent write could duplicate side effects.
+* **transient errors**: `ConnectionError`, `TimeoutError`, `ServerError` (5xx) - never 4xx `ClientError`s, since retrying those can't change the outcome.
+
+> Note for `Queue`: retries are implemented by re-queueing the failed request onto the same `Typhoeus::Hydra` that's already running the batch, so a retry can start as soon as its own request fails rather than waiting for the whole batch. One consequence: the `retry_delay` sleep happens inside that request's completion callback, which briefly pauses progress on *every other* in-flight request in the same queue (libcurl's multi interface is a single-threaded, cooperative event loop). This doesn't affect `Connection`, whose retries run sequentially with nothing else in flight.
 
 #### Custom logger
 
@@ -435,8 +460,8 @@ After checking out the repo, run `bundle install` and then `bundle execute rake`
 
 > The test suite uses a Sinatra server to make real HTTP requests. It is mounted via Capybara_discoball and running in the same process. It is still running reasonably fast (on my MacBook Air):
 
-    Finished in 2.01 seconds (files took 1.09 seconds to load)
-    824 examples, 0 failures, 7 pending
+    Finished in 1.02 seconds (files took 0.43805 seconds to load)  
+    882 examples, 0 failures, 7 pending
 
 You can also run `rake console` to open an irb session with the `ChimeraHttpClient` pre-loaded that will allow you to experiment.
 
