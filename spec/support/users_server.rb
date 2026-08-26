@@ -29,6 +29,21 @@ class UsersServer < Sinatra::Base
       return { message: "LGTM #{params[:code]}" }.to_json
     end
 
+    # returns a 500 for the first (succeed_after - 1) hits under :id, then a 200 - used to
+    # exercise retries against a real server. Pass a unique :id per test to avoid cross-test state.
+    get "/errors/flaky/:id" do
+      @@flaky_hits ||= Hash.new(0) # rubocop:disable Style/ClassVars
+      @@flaky_hits[params[:id]] += 1
+
+      if @@flaky_hits[params[:id]] < params[:succeed_after].to_i
+        status 500
+        return { message: "flaky failure ##{@@flaky_hits[params[:id]]}" }.to_json
+      end
+
+      status 200
+      return { message: "LGTM after #{@@flaky_hits[params[:id]]} attempt(s)" }.to_json
+    end
+
     post "/users" do
       if params[:unauthorized]
         status 403

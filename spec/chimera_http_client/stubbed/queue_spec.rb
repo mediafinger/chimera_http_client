@@ -49,6 +49,58 @@ describe ChimeraHttpClient::Queue do
     end
   end
 
+  describe "#execute with retries" do
+    let(:retry_endpoint) { "retry" }
+    let(:server_error_response) { Typhoeus::Response.new(code: 500, body: "boom", total_time: 0.1) }
+    let(:success_response)      { Typhoeus::Response.new(code: 200, body: response_json, total_time: 0.1) }
+
+    context "when a queued idempotent request fails and then succeeds" do
+      before do
+        Typhoeus.stub("#{base_url}/#{retry_endpoint}")
+                .and_return([server_error_response, server_error_response, success_response])
+      end
+
+      it "requeues onto the same hydra and returns the eventual success" do
+        queue.add(:get, retry_endpoint, retries: 2, retry_delay: 0)
+
+        responses = queue.execute
+
+        expect(responses.first).to be_a(ChimeraHttpClient::Response)
+        expect(responses.first.code).to eq(200)
+      end
+    end
+
+    context "when a queued non-idempotent request (post) fails" do
+      before do
+        Typhoeus.stub("#{base_url}/#{retry_endpoint}").and_return([server_error_response, success_response])
+      end
+
+      it "does not retry, even with retries configured" do
+        queue.add(:post, retry_endpoint, retries: 2, retry_delay: 0, body: "{}")
+
+        responses = queue.execute
+
+        expect(responses.first).to be_a(ChimeraHttpClient::ServerError)
+      end
+    end
+
+    context "when the queued request's error is not retryable (e.g. 404)" do
+      let(:not_found_response) { Typhoeus::Response.new(code: 404, body: "nope", total_time: 0.1) }
+
+      before do
+        Typhoeus.stub("#{base_url}/#{retry_endpoint}").and_return([not_found_response, success_response])
+      end
+
+      it "does not retry" do
+        queue.add(:get, retry_endpoint, retries: 2, retry_delay: 0)
+
+        responses = queue.execute
+
+        expect(responses.first).to be_a(ChimeraHttpClient::NotFoundError)
+      end
+    end
+  end
+
   describe "#empty" do
     it "deletes queued requests" do
       queue.add(method, endpoint)

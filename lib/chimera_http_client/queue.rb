@@ -42,6 +42,7 @@ module ChimeraHttpClient
         deserializer: @deserializer,
         logger: @logger,
         monitor: @monitor,
+        hydra: hydra,
       }
 
       Request.new(instance_options).create(

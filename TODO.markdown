@@ -105,15 +105,13 @@ _none known_
 * [x] ~~hook up Travis-CI~~
 * [x] ~~ensure it runs with Ruby 2.4 and newer~~
 
-### Retry Requests
+### ~~Retry Requests~~
 
-* [ ] either leverage Hydra to retry failed calls
-  * [ ] configure number of retries
-  * [ ] configure delay between retries
-  * [ ] retry idempotent calls GET, PUT, DELETE, HEAD automatically
-* [ ] maybe implement retries with wait and Redis (external dependency!)
-* [ ] or document in README how to build a retry mechanism
-  * [ ] https://gist.github.com/kunalmodi/2939288
+* [x] ~~leverage Hydra to retry failed calls (Queue); Connection uses a sequential retry loop instead~~
+  * [x] ~~configure number of retries~~
+  * [x] ~~configure delay between retries~~
+  * [x] ~~retry idempotent calls GET, PUT, DELETE, HEAD automatically~~
+* [x] ~~add example to README~~
 
 ### Queueing / run requests serialized
 

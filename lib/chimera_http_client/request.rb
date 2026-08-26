@@ -2,16 +2,35 @@ module ChimeraHttpClient
   class Request
     TIMEOUT_SECONDS = 3
 
+    # Only idempotent methods are retried automatically, regardless of the configured retries count
+    RETRYABLE_METHODS = %i(get put delete head).freeze
+
+    # Only network failures and 5xx are retried - 4xx client errors can't be fixed by retrying
+    RETRYABLE_ERRORS = [ConnectionError, TimeoutError, ServerError].freeze
+
+    RETRY_BACKOFF_MULTIPLIER = 2
+
     attr_reader :request, :result
 
     def initialize(options = {})
       @options = options
+      @hydra = options[:hydra]
+      @attempt = 0
     end
 
     def run(url:, method:, body: nil, options: {}, headers: {})
       create(url: url, method: method, body: body, options: options, headers: headers)
 
       @request.run
+
+      attempt = 0
+      while retryable?(method, @result, options, attempt)
+        attempt += 1
+        sleep(delay_for(attempt, options))
+
+        create(url: url, method: method, body: body, options: options, headers: headers)
+        @request.run
+      end
 
       @result
     end
@@ -57,7 +76,21 @@ module ChimeraHttpClient
           }
         )
 
-        @result = on_complete_handler(response)
+        result = on_complete_handler(response)
+
+        # Used for queued requests (Queue): retries are re-queued onto the same Hydra from
+        # inside this callback, per Typhoeus::Hydra::Queueable#queue ("can even be done while
+        # the hydra is running"). Connection-built requests never have a @hydra, so this branch
+        # never triggers for them - their retries are handled by the loop in #run instead.
+        if @hydra && retryable?(method, result, options, @attempt)
+          @attempt += 1
+          sleep(delay_for(@attempt, options))
+
+          create(url: url, method: method, body: body, options: options, headers: headers)
+          @hydra.queue(@request)
+        else
+          @result = result
+        end
       end
 
       @options[:logger]&.info(
@@ -75,6 +108,18 @@ module ChimeraHttpClient
     end
 
     private
+
+    def retryable?(method, result, options, attempt)
+      result.error? &&
+        RETRYABLE_METHODS.include?(method) &&
+        RETRYABLE_ERRORS.any? { |klass| result.is_a?(klass) } &&
+        attempt < options[:retries].to_i
+    end
+
+    # Delay before retry attempt n (1-indexed): retry_delay * RETRY_BACKOFF_MULTIPLIER**(n - 1)
+    def delay_for(attempt, options)
+      options[:retry_delay].to_f * (RETRY_BACKOFF_MULTIPLIER**(attempt - 1))
+    end
 
     def on_complete_handler(response)
       return Response.new(response, @options) if response.success?

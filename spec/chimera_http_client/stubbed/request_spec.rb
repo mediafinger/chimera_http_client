@@ -136,4 +136,83 @@ describe ChimeraHttpClient::Request do
       it_behaves_like "a Request (with stubbed response)"
     end
   end
+
+  describe "#run with retries" do
+    subject(:result) { request_instance.run(url: url, method: method, options: options) }
+
+    let(:request_instance) { described_class.new(deserializer: deserializer) }
+    let(:deserializer) { { error: ChimeraHttpClient::Deserializer.json_error } }
+    let(:url)     { "http://127.0.0.1/dummy" }
+    let(:method)  { :get }
+    let(:options) { { retries: retries, retry_delay: retry_delay } }
+    let(:retries) { 2 }
+    let(:retry_delay) { 1 }
+
+    let(:server_error_response) { Typhoeus::Response.new(code: 500, body: "boom", total_time: 0.1) }
+    let(:not_found_response)    { Typhoeus::Response.new(code: 404, body: "nope", total_time: 0.1) }
+    let(:success_response)      { Typhoeus::Response.new(code: 200, body: { "id" => 1 }.to_json, total_time: 0.1) }
+
+    before { allow(request_instance).to receive(:sleep) }
+
+    context "when it fails with a retryable error and then succeeds" do
+      before { Typhoeus.stub(url).and_return([server_error_response, server_error_response, success_response]) }
+
+      it "returns the eventual successful response" do
+        expect(result).to be_a(ChimeraHttpClient::Response)
+        expect(result.code).to eq(200)
+      end
+
+      it "waits with the fixed 2x backoff before each retry, in order" do
+        result
+
+        expect(request_instance).to have_received(:sleep).with(1).ordered
+        expect(request_instance).to have_received(:sleep).with(2).ordered
+      end
+    end
+
+    context "when every attempt fails" do
+      before { Typhoeus.stub(url).and_return(server_error_response) }
+
+      it "returns the last error once retries are exhausted" do
+        expect(result).to be_a(ChimeraHttpClient::ServerError)
+      end
+
+      it "sleeps exactly `retries` times" do
+        result
+
+        expect(request_instance).to have_received(:sleep).twice
+      end
+    end
+
+    context "when retries is not configured (defaults to 0)" do
+      let(:options) { {} }
+
+      before { Typhoeus.stub(url).and_return(server_error_response) }
+
+      it "does not retry" do
+        expect(result).to be_a(ChimeraHttpClient::ServerError)
+        expect(request_instance).not_to have_received(:sleep)
+      end
+    end
+
+    context "when the error is not retryable (e.g. 404)" do
+      before { Typhoeus.stub(url).and_return(not_found_response) }
+
+      it "does not retry" do
+        expect(result).to be_a(ChimeraHttpClient::NotFoundError)
+        expect(request_instance).not_to have_received(:sleep)
+      end
+    end
+
+    context "when the method is not idempotent (e.g. post)" do
+      let(:method) { :post }
+
+      before { Typhoeus.stub(url).and_return(server_error_response) }
+
+      it "does not retry even though the error is retryable" do
+        expect(result).to be_a(ChimeraHttpClient::ServerError)
+        expect(request_instance).not_to have_received(:sleep)
+      end
+    end
+  end
 end

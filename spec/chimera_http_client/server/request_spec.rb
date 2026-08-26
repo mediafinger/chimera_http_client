@@ -1,4 +1,5 @@
 require "server_spec_helper"
+require "securerandom"
 
 RSpec.shared_examples "a Request" do
   it { expect(subject).to be_kind_of(ChimeraHttpClient::Response) }
@@ -129,6 +130,31 @@ describe ChimeraHttpClient::Request do
       let(:response_code) { 200 }
 
       it_behaves_like "a Request"
+    end
+  end
+
+  describe "#run with retries against a real flaky endpoint" do
+    subject(:request) { connection.request.run(url: url, method: :get, options: { retries: 2, retry_delay: 0.05 }) }
+
+    let(:connection) { ChimeraHttpClient::Connection.new(base_url: "") }
+    let(:flaky_id)   { "retry-#{SecureRandom.hex(4)}" }
+    let(:url) { "#{UsersServer.endpoint_url}/api/v1/errors/flaky/#{flaky_id}?succeed_after=#{succeed_after}" }
+
+    context "when it succeeds within the retry budget" do
+      let(:succeed_after) { 3 } # fails twice (500), succeeds on the 3rd attempt
+
+      it "retries over real HTTP and returns the eventual success" do
+        expect(request).to be_a(ChimeraHttpClient::Response)
+        expect(request.code).to eq(200)
+      end
+    end
+
+    context "when it never succeeds within the retry budget" do
+      let(:succeed_after) { 10 } # always fails within 3 total attempts (1 + 2 retries)
+
+      it "returns the last error once retries are exhausted" do
+        expect(request).to be_a(ChimeraHttpClient::ServerError)
+      end
     end
   end
 end

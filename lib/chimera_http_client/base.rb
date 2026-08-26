@@ -13,6 +13,8 @@ module ChimeraHttpClient
       @cache = options[:cache]
       @user_agent = options.fetch(:user_agent, USER_AGENT)
       @verbose = options.fetch(:verbose, false)
+      @retries = options[:retries] || 0
+      @retry_delay = options[:retry_delay] || 1
     end
 
     private
@@ -22,6 +24,8 @@ module ChimeraHttpClient
       options[:timeout] ||= @timeout
       options[:cache] = @cache if options[:cache].nil?
       options[:verbose] = @verbose if options[:verbose].nil?
+      options[:retries] = @retries if options[:retries].nil?
+      options[:retry_delay] = @retry_delay if options[:retry_delay].nil?
 
       options
     end
