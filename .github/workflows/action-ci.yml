@@ -2,14 +2,14 @@ name: rubies-ci
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ master ]
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest] # macos-latest
-        ruby: ['3.3', '3.4', 'truffleruby', 'jruby']
+        ruby: ['3.3', '3.4', '4.0', 'truffleruby', 'jruby']
         # add 'truffleruby', 'jruby', for releases - and remember to use quotes due to https://github.com/actions/runner/issues/849
 
     runs-on: ${{ matrix.os }}

@@ -17,14 +17,15 @@ The only other runtime dependency is Ruby's latest code loader [**zeitwerk**](ht
 ^
 ### Ruby version
 
-| Chimera version | MRI Ruby version                                    | JRuby | TruffleRuby |
-|:----------------|:----------------------------------------------------|:-----:|:-----------:|
-| >= 1.7          | >= 3.3 (older versions untested, likely still work) |  yes  |     yes     |
-| >= 1.6          | >= 2.7 (all 3.x versions supported)                 |  yes  |     yes     |
-| >= 1.4          | >= 2.5 (3.0 compatibility ensured)                  |  yes  |     no      |
-| >= 1.1          | >= 2.5                                              |   ?   |      ?      |
-| =  1.0          | >= 2.4, <= 3.0                                      |   ?   |      ?      |
-| <= 0.5          | >= 2.1, <= 3.0                                      |   ?   |      ?      |
+| Chimera version | MRI Ruby version                                                     | JRuby | TruffleRuby |
+|:----------------|:---------------------------------------------------------------------|:-----:|:-----------:|
+| >= 1.8          | >= 3.3 (4.0 supported, older versions untested, likely still work)   |  yes  |     yes     |
+| >= 1.7          | >= 3.3 (older versions untested, likely still work)                  |  yes  |     yes     |
+| >= 1.6          | >= 2.7 (all 3.x versions supported)                                  |  yes  |     yes     |
+| >= 1.4          | >= 2.5 (3.0 compatibility ensured)                                   |  yes  |     no      |
+| >= 1.1          | >= 2.5                                                               |   ?   |      ?      |
+| =  1.0          | >= 2.4, <= 3.0                                                       |   ?   |      ?      |
+| <= 0.5          | >= 2.1, <= 3.0                                                       |   ?   |      ?      |
 
 The test suite of v1.4 passes on **MRI Ruby** (2.5, 2.6, 2.7, 3.0) and on **JRuby**, but not on **TruffleRuby**.  
 The test suite of v1.6 passes on **MRI Ruby** (2.7, 3.0, 3.1, 3.2, 3.3) and on **JRuby** and **TruffleRuby**.  
@@ -38,36 +39,36 @@ Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `t
 
 <!-- TOC depthFrom:1 depthTo:4 withLinks:1 updateOnSave:0 orderedList:0 -->
 
-* [ChimeraHttpClient](#chimerahttpclient)
-  * [Dependencies](#dependencies)
-    * [Ruby version](#ruby-version)
-    * [ENV variables](#env-variables)
-  * [Table of Contents](#table-of-contents)
-  * [The Connection class](#the-connection-class)
-    * [Initialization](#initialization)
-      * [Mandatory initialization parameter `base_url`](#mandatory-initialization-parameter-base_url)
-      * [Optional initialization parameters](#optional-initialization-parameters)
-        * [Custom deserializers](#custom-deserializers)
-        * [Monitoring, metrics, instrumentation](#monitoring-metrics-instrumentation)
-    * [Request methods](#request-methods)
-      * [Mandatory request parameter `endpoint`](#mandatory-request-parameter-endpoint)
-      * [Optional request parameters](#optional-request-parameters)
-      * [Basic auth](#basic-auth)
-      * [Timeout duration](#timeout-duration)
-      * [Custom logger](#custom-logger)
-      * [Caching responses](#caching-responses)
-    * [Example usage](#example-usage)
-  * [The Request class](#the-request-class)
-  * [The Response class](#the-response-class)
-  * [Error classes](#error-classes)
-  * [The Queue class](#the-queue-class)
-    * [Queueing requests](#queueing-requests)
-    * [Executing requests in parallel](#executing-requests-in-parallel)
-    * [Empty the queue](#empty-the-queue)
-  * [Installation](#installation)
-  * [Maintainers and Contributors](#maintainers-and-contributors)
-    * [Roadmap](#roadmap)
-  * [Chimera](#chimera)
+- [ChimeraHttpClient](#chimerahttpclient)
+  - [Dependencies](#dependencies)
+    - [Ruby version](#ruby-version)
+    - [ENV variables](#env-variables)
+  - [Table of Contents](#table-of-contents)
+  - [The Connection class](#the-connection-class)
+    - [Initialization](#initialization)
+      - [Mandatory initialization parameter `base_url`](#mandatory-initialization-parameter-base_url)
+      - [Optional initialization parameters](#optional-initialization-parameters)
+        - [Custom deserializers](#custom-deserializers)
+        - [Monitoring, metrics, instrumentation](#monitoring-metrics-instrumentation)
+    - [Request methods](#request-methods)
+      - [Mandatory request parameter `endpoint`](#mandatory-request-parameter-endpoint)
+      - [Optional request parameters](#optional-request-parameters)
+      - [Basic auth](#basic-auth)
+      - [Timeout duration](#timeout-duration)
+      - [Custom logger](#custom-logger)
+      - [Caching responses](#caching-responses)
+    - [Example usage](#example-usage)
+  - [The Request class](#the-request-class)
+  - [The Response class](#the-response-class)
+  - [Error classes](#error-classes)
+  - [The Queue class](#the-queue-class)
+    - [Queueing requests](#queueing-requests)
+    - [Executing requests in parallel](#executing-requests-in-parallel)
+    - [Empty the queue](#empty-the-queue)
+  - [Installation](#installation)
+  - [Maintainers and Contributors](#maintainers-and-contributors)
+    - [Roadmap](#roadmap)
+  - [Chimera](#chimera)
 
 <!-- /TOC -->
 

@@ -40,9 +40,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "irb",                ">= 1.15"
   spec.add_development_dependency "rake",               ">= 13.2"
   spec.add_development_dependency "rspec",              "~> 3.13"
-  spec.add_development_dependency "rubocop",            "~> 1.75.7"
-  spec.add_development_dependency "rubocop-rake",       "~> 0.7.1"
-  spec.add_development_dependency "rubocop-rspec",      "~> 3.6.0"
+  spec.add_development_dependency "rubocop",            "~> 1.75"
+  spec.add_development_dependency "rubocop-rake",       "~> 0.7"
+  spec.add_development_dependency "rubocop-rspec",      "~> 3.10"
 
   # only for server specs with real HTTP requests
   spec.add_development_dependency "capybara",           "~> 3.40"
