@@ -41,6 +41,7 @@ RSpec.shared_examples "a Connection request with correct headers" do
         timeout:         ChimeraHttpClient::Request::TIMEOUT_SECONDS,
         accept_encoding: "gzip",
         cache:           nil,
+        verbose:         false,
       }
     )
   end
@@ -57,7 +58,7 @@ describe ChimeraHttpClient::Connection do
   let(:failure_code) { 404 }
   let(:failure_body) { { message: "User with id = #{failure_code} not found" } }
 
-  let(:request_headers) { { "Content-Type" => "application/json" } }
+  let(:request_headers) { { "Content-Type" => "application/json", "User-Agent" => ChimeraHttpClient::Base::USER_AGENT } }
 
   describe ".new (ensure methods are generated correctly)" do
     it { expect(connection).to be_kind_of described_class }

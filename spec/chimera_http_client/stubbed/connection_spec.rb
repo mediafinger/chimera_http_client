@@ -41,6 +41,7 @@ RSpec.shared_examples "a Connection request with correct headers (with stubbed r
         timeout:         ChimeraHttpClient::Request::TIMEOUT_SECONDS,
         accept_encoding: "gzip",
         cache:           nil,
+        verbose:         false,
       }
     )
   end
@@ -62,7 +63,7 @@ describe ChimeraHttpClient::Connection do
   let(:failure_body) { "#{failure_code} BadRequest" }
 
   let(:context) { double("context") } # rubocop:disable RSpec/VerifiedDoubles
-  let(:request_headers) { { "Content-Type" => "application/json" } }
+  let(:request_headers) { { "Content-Type" => "application/json", "User-Agent" => ChimeraHttpClient::Base::USER_AGENT } }
 
   describe ".new (ensure methods are generated correctly)" do
     it { expect(connection).to be_kind_of described_class }

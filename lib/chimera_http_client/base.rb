@@ -10,11 +10,9 @@ module ChimeraHttpClient
       @logger = options[:logger]
       @monitor = options[:monitor]
       @timeout = options[:timeout]
-
-      Typhoeus::Config.cache = options[:cache]
-      Typhoeus::Config.memoize = false # hydra setting, prevents a possible memory leak
-      Typhoeus::Config.user_agent = options.fetch(:user_agent, USER_AGENT)
-      Typhoeus::Config.verbose = options.fetch(:verbose, false)
+      @cache = options[:cache]
+      @user_agent = options.fetch(:user_agent, USER_AGENT)
+      @verbose = options.fetch(:verbose, false)
     end
 
     private
@@ -22,6 +20,8 @@ module ChimeraHttpClient
     # Add default values to call options
     def augmented_options(options)
       options[:timeout] ||= @timeout
+      options[:cache] = @cache if options[:cache].nil?
+      options[:verbose] = @verbose if options[:verbose].nil?
 
       options
     end
@@ -41,7 +41,7 @@ module ChimeraHttpClient
     end
 
     def default_headers
-      { "Content-Type" => "application/json" }
+      { "Content-Type" => "application/json", "User-Agent" => @user_agent }
     end
 
     def default_deserializer

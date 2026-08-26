@@ -25,6 +25,7 @@ module ChimeraHttpClient
         timeout:         options[:timeout] || TIMEOUT_SECONDS,
         accept_encoding: "gzip",
         cache:           options[:cache],
+        verbose:         options[:verbose],
       }
 
       # Basic-auth support:
@@ -52,7 +53,7 @@ module ChimeraHttpClient
             url: url,
             code: response.code,
             runtime: runtime,
-            user_agent: Typhoeus::Config.user_agent,
+            user_agent: headers["User-Agent"],
           }
         )
 
@@ -66,7 +67,7 @@ module ChimeraHttpClient
           url: url,
           code: nil,
           runtime: 0,
-          user_agent: Typhoeus::Config.user_agent,
+          user_agent: headers["User-Agent"],
         }
       )
 

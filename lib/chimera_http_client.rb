@@ -8,4 +8,6 @@ module ChimeraHttpClient
 
   # as Zeitwerk can't handle innner classes properly :-/
   require_relative "chimera_http_client/error"
+
+  Typhoeus::Config.memoize = false # hydra setting, prevents a possible memory leak
 end
