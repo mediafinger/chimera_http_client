@@ -98,6 +98,82 @@ describe ChimeraHttpClient::Connection do
     end
   end
 
+  describe "option headers" do
+    subject(:custom_headers) { connection.get(endpoint, headers: { "X-Custom" => "yes" }) }
+
+    before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
+    it "merges a per-request header on top of the connection's default headers" do
+      expect(custom_headers.response.request.original_options[:headers]).to include(
+        "Content-Type" => "application/json", "User-Agent" => ChimeraHttpClient::Base::USER_AGENT, "X-Custom" => "yes"
+      )
+    end
+  end
+
+  describe "connection-level default headers" do
+    let(:custom_connection) do
+      described_class.new(base_url: base_url, headers: { "Content-Type" => "application/xml" })
+    end
+
+    before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
+    it "overrides just the given key, keeping everything else (e.g. User-Agent)" do
+      response = custom_connection.get(endpoint)
+
+      expect(response.response.request.original_options[:headers]).to eq(
+        "Content-Type" => "application/xml", "User-Agent" => ChimeraHttpClient::Base::USER_AGENT
+      )
+    end
+
+    it "still lets a per-request header override the connection-level default" do
+      response = custom_connection.get(endpoint, headers: { "Content-Type" => "text/plain" })
+
+      expect(response.response.request.original_options[:headers]).to include("Content-Type" => "text/plain")
+    end
+  end
+
+  describe "default headers via ENV", :aggregated_failures do
+    let(:plain_connection) { described_class.new(base_url: base_url) }
+
+    before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
+    around do |example|
+      original = ENV.fetch("CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS", nil)
+      example.run
+      ENV["CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS"] = original
+    end
+
+    it "merges a header from the ENV var into every request" do
+      ENV["CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS"] = '{"X-Service-Name":"orders-api"}'
+
+      response = plain_connection.get(endpoint)
+
+      expect(response.response.request.original_options[:headers]).to include("X-Service-Name" => "orders-api")
+    end
+
+    it "lets a connection-level header override the same key from ENV" do
+      ENV["CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS"] = '{"Content-Type":"text/xml"}'
+      connection_with_override = described_class.new(base_url: base_url, headers: { "Content-Type" => "application/json" })
+
+      response = connection_with_override.get(endpoint)
+
+      expect(response.response.request.original_options[:headers]).to include("Content-Type" => "application/json")
+    end
+
+    it "raises a clear error for malformed JSON" do
+      ENV["CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS"] = "{not valid json"
+
+      expect do
+        plain_connection
+      end.to raise_error(ChimeraHttpClient::ParameterMissingError, /CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS/)
+    end
+  end
+
+  describe "ChimeraHttpClient::Base::DEFAULT_HEADERS" do
+    it { expect(ChimeraHttpClient::Base::DEFAULT_HEADERS).to eq("Content-Type" => "application/json") }
+    it { expect(ChimeraHttpClient::Base::DEFAULT_HEADERS).to be_frozen }
+  end
+
   # GET
   describe "#get" do
     subject(:get) { connection.get(endpoint, context: context) }

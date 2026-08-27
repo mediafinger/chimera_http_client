@@ -101,6 +101,18 @@ describe ChimeraHttpClient::Queue do
     end
   end
 
+  describe "configurable default headers" do
+    let(:custom_queue) { described_class.new(base_url: base_url, headers: { "Content-Type" => "application/xml" }) }
+
+    it "applies the connection-level default headers to queued requests, same as Connection" do
+      request = custom_queue.add(method, endpoint).first
+
+      expect(request.request.original_options[:headers]).to include(
+        "Content-Type" => "application/xml", "User-Agent" => ChimeraHttpClient::Base::USER_AGENT
+      )
+    end
+  end
+
   describe "#empty" do
     it "deletes queued requests" do
       queue.add(method, endpoint)

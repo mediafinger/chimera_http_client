@@ -37,6 +37,8 @@ All information above is given for **Linux**.
 
 Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `true` (or `'true'`) will provide more detailed error messages for logging and also add additional information to the Error JSON. It is recommended to use this only in development environments.
 
+Setting `ENV['CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS']` to a JSON object string will merge those headers into every `Connection`/`Queue` in the process, e.g. `export CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS='{"X-Service-Name":"orders-api"}'`. This is meant for deployment/ops-level defaults (like identifying which service is calling), set once outside application code. See [Custom headers](#custom-headers) below.
+
 ## Table of Contents
 
 <!-- TOC depthFrom:1 depthTo:4 withLinks:1 updateOnSave:0 orderedList:0 -->
@@ -51,6 +53,7 @@ Setting the environment variable `ENV['CHIMERA_HTTP_CLIENT_LOG_REQUESTS']` to `t
       - [Mandatory initialization parameter `base_url`](#mandatory-initialization-parameter-base_url)
       - [Optional initialization parameters](#optional-initialization-parameters)
         - [Custom deserializers](#custom-deserializers)
+        - [Custom headers](#custom-headers)
         - [Monitoring, metrics, instrumentation](#monitoring-metrics-instrumentation)
     - [Request methods](#request-methods)
       - [Mandatory request parameter `endpoint`](#mandatory-request-parameter-endpoint)
@@ -100,6 +103,7 @@ The optional parameters are:
 
 * `cache` - an instance of your cache solution, can be overwritten in any request
 * `deserializers` - custom methods to deserialize the response body, below more details
+* `headers` - override/extend the default request headers (`{ "Content-Type" => "application/json" }`), can be overwritten or merged with per-request headers, below more details
 * `logger` - an instance of a logger class that implements `#info`, `#warn` and `#error` methods
 * `monitor` - to collect metrics about requests, the basis for your instrumentation needs
 * `retries` - the number of times a failed idempotent request is retried, can be overwritten in any request, the default is `0` (no retries)
@@ -118,7 +122,33 @@ A Deserializer has to be an object on which the method `call` with the parameter
 
     custom_deserializer.call(body)
 
-where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. Don't forget to make requests with another header than the default `"Content-Type" => "application/json"`, when the API you connect to does not support JSON.
+where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. If the API you connect to does not support JSON, set `headers` (see [Custom headers](#custom-headers) below) once on the `Connection` instead of repeating it on every request.
+
+##### Custom headers
+
+Every request sends `{ "Content-Type" => "application/json" }` plus a `User-Agent` by default. Four layers apply on top of each other (each one merges in, overriding only the keys it sets, so you never have to restate headers you're not changing):
+
+1. the built-in default above (also available as `ChimeraHttpClient::Base::DEFAULT_HEADERS`)
+2. `ENV['CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS']`, a JSON object (see [ENV variables](#env-variables) above)
+3. `headers` passed to `Connection.new`/`Queue.new` - the connection's own default
+4. `headers` passed to an individual request - already documented above, unchanged
+
+```ruby
+# connecting to a non-JSON API: override just Content-Type, everything else (User-Agent, ...) still applies
+connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', headers: { "Content-Type" => "application/xml" })
+```
+
+A common use for the connection-level `headers` option is a request/correlation id that should be attached to every call made for one unit of work (a background job, one inbound request being served), without every call site needing to know about it:
+
+```ruby
+connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', headers: { "X-Request-Id" => job_id })
+```
+
+For something that's the same for every request in the whole process instead - e.g. identifying which of your services is calling, in a service-to-service setting - set it once via `ENV['CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS']` at the deployment level rather than in application code:
+
+```bash
+export CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS='{"X-Service-Name":"orders-api"}'
+```
 
 ##### Monitoring, metrics, instrumentation
 

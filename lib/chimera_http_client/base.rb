@@ -1,6 +1,8 @@
 module ChimeraHttpClient
   class Base
     USER_AGENT = "ChimeraHttpClient (by mediafinger)".freeze
+    DEFAULT_HEADERS = { "Content-Type" => "application/json" }.freeze
+    DEFAULT_HEADERS_ENV_VAR = "CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS".freeze
 
     def initialize(options = {})
       fail(ChimeraHttpClient::ParameterMissingError, "base_url expected, but not given") if options[:base_url].nil?
@@ -11,6 +13,7 @@ module ChimeraHttpClient
       @monitor = options[:monitor]
       @timeout = options[:timeout]
       @cache = options[:cache]
+      @headers = DEFAULT_HEADERS.merge(headers_from_env).merge(options[:headers] || {})
       @user_agent = options.fetch(:user_agent, USER_AGENT)
       @verbose = options.fetch(:verbose, false)
       @retries = options[:retries] || 0
@@ -45,7 +48,16 @@ module ChimeraHttpClient
     end
 
     def default_headers
-      { "Content-Type" => "application/json", "User-Agent" => @user_agent }
+      @headers.merge("User-Agent" => @user_agent)
+    end
+
+    def headers_from_env
+      raw = ENV[DEFAULT_HEADERS_ENV_VAR].to_s
+      return {} if raw.strip.empty?
+
+      JSON.parse(raw)
+    rescue JSON::ParserError => e
+      raise(ChimeraHttpClient::ParameterMissingError, "ENV['#{DEFAULT_HEADERS_ENV_VAR}'] is not valid JSON: #{e.message}")
     end
 
     def default_deserializer

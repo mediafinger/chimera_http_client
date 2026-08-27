@@ -79,12 +79,12 @@ _none known_
 * [ ] enable to pass on_headers, on_body, on_complete procs
 * [ ] add example to README
 
-### HTTP Headers
+### ~~HTTP Headers~~
 
-* [ ] make Connection#default_headers configurable
-* [ ] allow to set default_headers via ENV vars
-* [ ] give example how to use default_headers (e.g. request_id)
-* [ ] explain in README how to benefit from this gem in a given setting
+* [x] ~~make Connection#default_headers configurable~~
+* [x] ~~allow to set default_headers via ENV vars~~
+* [x] ~~give example how to use default_headers (e.g. request_id)~~
+* [x] ~~explain in README how to benefit from this gem in a given setting~~
 
 ### ~~Caching~~
 
