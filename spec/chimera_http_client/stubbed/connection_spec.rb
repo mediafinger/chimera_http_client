@@ -174,6 +174,71 @@ describe ChimeraHttpClient::Connection do
     it { expect(ChimeraHttpClient::Base::DEFAULT_HEADERS).to be_frozen }
   end
 
+  describe "body serialization" do
+    before { Typhoeus.stub("#{base_url}/#{endpoint}").and_return(typhoeus_response) }
+
+    context "with a Hash body" do
+      it "auto-serializes it to JSON by default" do
+        response = connection.post(endpoint, body: { "name" => "Andy" })
+
+        expect(response.response.request.original_options[:body]).to eq({ "name" => "Andy" }.to_json)
+      end
+    end
+
+    context "with an Array body" do
+      it "auto-serializes it to JSON by default" do
+        response = connection.post(endpoint, body: [1, 2, 3])
+
+        expect(response.response.request.original_options[:body]).to eq([1, 2, 3].to_json)
+      end
+    end
+
+    context "with an already-serialized String body" do
+      it "passes it through completely unchanged (no double-encoding)" do
+        already_serialized = { "name" => "Andy" }.to_json
+
+        response = connection.post(endpoint, body: already_serialized)
+
+        expect(response.response.request.original_options[:body]).to equal(already_serialized)
+      end
+    end
+
+    context "without a body, and not optional" do
+      it "still raises ParameterMissingError" do
+        expect { connection.post(endpoint) }.to raise_error(ChimeraHttpClient::ParameterMissingError)
+      end
+    end
+
+    context "with a connection-level custom serializer" do
+      let(:custom_serializer) { ->(body) { body.map { |k, v| "#{k}=#{v}" }.join("&") } }
+      let(:custom_connection) { described_class.new(base_url: base_url, serializer: custom_serializer) }
+
+      it "uses the custom serializer instead of the default" do
+        response = custom_connection.post(endpoint, body: { "name" => "Andy" })
+
+        expect(response.response.request.original_options[:body]).to eq("name=Andy")
+      end
+    end
+
+    context "with a per-request serializer override" do
+      let(:custom_serializer) { ->(body) { body.map { |k, v| "#{k}=#{v}" }.join("&") } }
+
+      it "uses the per-request serializer instead of the connection-level default" do
+        response = connection.post(endpoint, body: { "name" => "Andy" }, serializer: custom_serializer)
+
+        expect(response.response.request.original_options[:body]).to eq("name=Andy")
+      end
+    end
+
+    context "with an no-op serializer that conserves the body as is" do
+      it "leaves a Hash body unconverted, so Typhoeus/Ethon can form-encode it natively" do
+        response = connection.post(endpoint, body: { "name" => "Andy" }, serializer: ->(body) { body })
+
+        expect(response.response.request.original_options[:body]).to eq("name" => "Andy")
+      end
+    end
+  end
+
   # GET
   describe "#get" do
     subject(:get) { connection.get(endpoint, context: context) }

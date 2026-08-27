@@ -113,6 +113,14 @@ describe ChimeraHttpClient::Queue do
     end
   end
 
+  describe "body serialization" do
+    it "auto-serializes a Hash body to JSON, same as Connection" do
+      request = queue.add(:post, endpoint, body: { "name" => "Andy" }).first
+
+      expect(request.request.original_options[:body]).to eq({ "name" => "Andy" }.to_json)
+    end
+  end
+
   describe "#empty" do
     it "deletes queued requests" do
       queue.add(method, endpoint)

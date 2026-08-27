@@ -54,6 +54,7 @@ Setting `ENV['CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS']` to a JSON object string wil
       - [Optional initialization parameters](#optional-initialization-parameters)
         - [Custom deserializers](#custom-deserializers)
         - [Custom headers](#custom-headers)
+        - [Custom serializer](#custom-serializer)
         - [Monitoring, metrics, instrumentation](#monitoring-metrics-instrumentation)
     - [Request methods](#request-methods)
       - [Mandatory request parameter `endpoint`](#mandatory-request-parameter-endpoint)
@@ -108,6 +109,7 @@ The optional parameters are:
 * `monitor` - to collect metrics about requests, the basis for your instrumentation needs
 * `retries` - the number of times a failed idempotent request is retried, can be overwritten in any request, the default is `0` (no retries)
 * `retry_delay` - the base delay in seconds between retries, can be overwritten in any request, the default is `1`
+* `serializer` - override how a Hash/Array request body is turned into a request, can be overwritten in any request, below more details
 * `timeout` - the timeout for all requests, can be overwritten in any request, the default are 3 seconds
 * `user_agent` - if you would like your calls to identify with a specific user agent
 * `verbose` - the default is `false`, set it to true while debugging issues
@@ -122,7 +124,7 @@ A Deserializer has to be an object on which the method `call` with the parameter
 
     custom_deserializer.call(body)
 
-where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. If the API you connect to does not support JSON, set `headers` (see [Custom headers](#custom-headers) below) once on the `Connection` instead of repeating it on every request.
+where `body` is the response body (in the default case a JSON object). The class `Deserializer` contains the default objects that are used. They might help you creating your own. If the API you connect to does not support JSON, set `headers` (see [Custom headers](#custom-headers) below) once on the `Connection` instead of repeating it on every request - and see [Custom serializer](#custom-serializer) below for the equivalent on the request-body side.
 
 ##### Custom headers
 
@@ -148,6 +150,37 @@ For something that's the same for every request in the whole process instead - e
 
 ```bash
 export CHIMERA_HTTP_CLIENT_DEFAULT_HEADERS='{"X-Service-Name":"orders-api"}'
+```
+
+##### Custom serializer
+
+A `Hash` or `Array` `body` is automatically serialized before the request is sent - by default with `body.to_json`, so this now just works:
+
+```ruby
+connection.post!('users', body: { name: "Andy" }) # no more body.to_json needed
+```
+
+A `String` body (e.g. one you already serialized yourself) is always passed through completely unchanged - so any existing code still doing `body: body.to_json` keeps working exactly as before.
+
+To use a different format, pass `serializer` to `Connection.new`/`Queue.new`, or to an individual request. A Serializer has to be an object on which the method `call` with the parameter `body` can be called:
+
+    custom_serializer.call(body)
+
+```ruby
+# talking to an XML API instead
+connection = ChimeraHttpClient::Connection.new(base_url: 'http://localhost:3000/v1', serializer: ->(body) { body.to_xml })
+```
+
+The serializer normally returns a `String`, but it can also return the `Hash` unconverted - Typhoeus (via Ethon/libcurl) then form-encodes it natively as `application/x-www-form-urlencoded`, or as real multipart if a value looks file-shaped:
+
+```ruby
+# posting a plain form instead of JSON
+connection.post(
+  'login',
+  body: { username: "andy", password: "secret" },
+  serializer: ->(body) { body }, # hand the Hash to Typhoeus/Ethon unconverted
+  headers: { "Content-Type" => "application/x-www-form-urlencoded" }
+)
 ```
 
 ##### Monitoring, metrics, instrumentation
@@ -209,6 +242,7 @@ All request methods expect a mandatory `endpoint` and an optional hash as parame
 * `cache` - optionally overwrite the cache store set in `Connection` in any request
 * `retries` - optionally overwrite the number of retries set in `Connection` for this request
 * `retry_delay` - optionally overwrite the retry delay set in `Connection` for this request
+* `serializer` - optionally overwrite the body serializer set in `Connection` for this request
 * `monitoring_context` - pass additional information you want to collect with your instrumentation `monitor`
 
 Example:
@@ -343,7 +377,7 @@ class Users
   # CREATE a new user by sending attributes in a JSON body and instantiate the new User
   #
   def create(body:)
-    response = connection.post!('users', body: body.to_json) # body.to_json (!!)
+    response = connection.post!('users', body: body) # a Hash body is serialized to JSON automatically
 
     user = response.parsed_body
     User.new(id: user['id'], name: user['name'], email: user['email'])
@@ -378,7 +412,7 @@ To create and fetch a user from a remote service with the `Users` wrapper listed
 
 Usually it does not have to be used directly. It is the class that executes the `Typhoeus::Requests`, raises `Errors` on failing and returns `Response` objects on successful calls.
 
-The `body` which it receives from the `Connection` class has to be in the in the (serialized) form in which the endpoint expects it. Usually this means you have to pass a JSON string to the `body` (it will **not** be serialized automatically).
+By the time `Request` receives `body`, it's already in the (serialized) form the endpoint expects: `Connection`/`Queue` auto-serialize a `Hash`/`Array` body to JSON (or via a custom `serializer`, see [Custom serializer](#custom-serializer)) before it ever reaches `Request`. A `String` body is passed through unchanged.
 
 ## The Response class
 

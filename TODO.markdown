@@ -22,6 +22,12 @@ _none known_
 * [x] ~~use custom deserializer in #parsed_body instead of default JSON parsing~~
 * [x] ~~add example to README~~
 
+### ~~Custom serializer~~
+
+* [x] ~~allow to pass custom serializer~~
+* [x] ~~use custom serializer with body instead of default JSON serialization ~~
+* [x] ~~add example to README~~
+
 ### Queueing / running in parallel
 
 * [x] ~~allow to queue multiple requests~~

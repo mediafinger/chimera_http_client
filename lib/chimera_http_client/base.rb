@@ -9,6 +9,7 @@ module ChimeraHttpClient
 
       @base_url = options.fetch(:base_url)
       @deserializer = default_deserializer.merge(options.fetch(:deserializer, {}))
+      @serializer = options.fetch(:serializer, ::ChimeraHttpClient::Serializer.json)
       @logger = options[:logger]
       @monitor = options[:monitor]
       @timeout = options[:timeout]
@@ -36,10 +37,13 @@ module ChimeraHttpClient
     def extract_body(options)
       body = options.delete(:body)
       body_optional = options.delete(:body_optional)
+      serializer = options.delete(:serializer) || @serializer
 
       fail(ChimeraHttpClient::ParameterMissingError, "body expected, but not given") if body.nil? && !body_optional
 
-      body
+      return body unless body.is_a?(Hash) || body.is_a?(Array)
+
+      serializer.call(body)
     end
 
     def extract_headers(options, headers)
